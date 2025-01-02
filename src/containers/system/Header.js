@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 
-const pages = ['Calendar', 'Pricing', 'Blog'];
+const pages = ['Product', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Header() {
@@ -95,9 +95,6 @@ function Header() {
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={() => {
                                     handleCloseNavMenu();
-                                    if (page === "Calendar") {
-                                        navigate('/calendar');
-                                    }
                                 }}>
                                     <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
                                 </MenuItem>

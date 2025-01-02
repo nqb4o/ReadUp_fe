@@ -161,6 +161,7 @@ export default function Login(props) {
                         getGoogleData.data.name,
                         getGoogleData.data.sub
                     )
+                    console.log(response)
 
                     const token = response.data.accessToken;
                     sessionStorage.setItem("authToken", token);

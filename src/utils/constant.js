@@ -3,5 +3,4 @@ export const path = {
     LOGIN: '/login',
     REGISTER: '/register',
     RESETPASSWORD: '/reset-password',
-    CALENDAR: '/calendar'
 };

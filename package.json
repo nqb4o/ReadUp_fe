@@ -1,7 +1,6 @@
 {
   "name": "my-app",
   "version": "0.1.0",
-  "proxy": "https://qldt.hanu.vn",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",

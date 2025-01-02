@@ -7,7 +7,6 @@ import Register from "../containers/auth/Register.js"
 import PrivateRoute from "./PrivateRoute.js";
 import HomePage from "../containers/system/HomePage.js"
 import EnterNewPassword from "../containers/auth/EnterNewPassword.js"
-import Calendar from "../containers/system/Calendar.js"
 import { path } from "../utils/constant.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 
@@ -34,11 +33,6 @@ const router = createBrowserRouter([
         path: path.RESETPASSWORD,
         element:
             <EnterNewPassword />
-    },
-    {
-        path: path.CALENDAR,
-        element:
-            <Calendar />
     }
 ]);
 
