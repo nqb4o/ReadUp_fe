@@ -21,6 +21,7 @@ import { handleLoginApi, googleAuth, getGoogleDataApi } from '../../services/Aut
 import { useNavigate } from 'react-router-dom';
 import { path } from "../../utils/constant.js";
 import { useGoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -65,15 +66,16 @@ const LoginContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function Login(props) {
+    const { login } = useAuth();
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false); // State để hiển thị loading
+    const [loading, setLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
-    const [loginSuccess, setLoginSuccess] = useState(false); // Thông báo thành công
-    const navigate = useNavigate(); // Hook để chuyển hướng
+    const [loginSuccess, setLoginSuccess] = useState(false);
+    const navigate = useNavigate();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -113,35 +115,33 @@ export default function Login(props) {
         const email = data.get('email');
         const password = data.get('password');
 
-        // Validate inputs trước khi gửi API
         if (!validateInputs(email, password)) {
             return;
         }
+
         try {
-            setLoading(true); // Hiển thị loading khi bắt đầu gửi request
-            setLoginError(''); // Xóa lỗi cũ nếu có
+            setLoading(true);
+            setLoginError('');
             setEmailErrorMessage('');
-            setPasswordErrorMessage('')
-            setLoginSuccess(false); // Reset trạng thái thành công
+            setPasswordErrorMessage('');
+            setLoginSuccess(false);
 
             const response = await handleLoginApi(email, password);
-            console.log(response)
+
             if (response.status === 200) {
-                const token = response.data.token;
-                sessionStorage.setItem('authToken', token);
-
+                await login(response.data.token);
                 setLoginSuccess(true);
-
-                // Chuyển hướng người dùng sang trang HOME
                 setTimeout(() => {
                     navigate(path.HOME);
-                }, 1500); // Thời gian trễ để hiển thị thông báo thành công
+                }, 1500);
             }
         } catch (error) {
             console.error('Login failed:', error);
             setLoginError(
                 error.response?.data?.message || 'An error occurred. Please try again later.'
             );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -150,8 +150,9 @@ export default function Login(props) {
             setLoading(true);
             setLoginError('');
             setEmailErrorMessage('');
-            setPasswordErrorMessage('')
+            setPasswordErrorMessage('');
             setLoginSuccess(false);
+
             try {
                 const getGoogleData = await getGoogleDataApi(tokenResponse.access_token);
 
@@ -160,18 +161,14 @@ export default function Login(props) {
                         getGoogleData.data.email,
                         getGoogleData.data.name,
                         getGoogleData.data.sub
-                    )
-                    console.log(response)
+                    );
 
-                    const token = response.data.accessToken;
-                    sessionStorage.setItem("authToken", token);
-
+                    await login(response.data.accessToken);
                     setLoginSuccess(true);
 
                     setTimeout(() => {
                         navigate(path.HOME);
                     }, 1500);
-
                 } else {
                     throw new Error('Unexpected response from server.');
                 }
@@ -254,7 +251,7 @@ export default function Login(props) {
                         <ForgotPassword open={open} handleClose={handleClose} />
                         {loginError && <Typography color="error" sx={{ mb: 2 }}>{loginError}</Typography>}
                         {loginSuccess && (
-                            <Typography color="success" sx={{ mb: 2 }}>
+                            <Typography color="success.main" sx={{ mb: 2 }}>
                                 Login successful! Redirecting...
                             </Typography>
                         )}
@@ -263,7 +260,6 @@ export default function Login(props) {
                             disabled={loading}
                             fullWidth
                             variant="contained"
-                            onClick={validateInputs}
                         >
                             {loading ? 'Logging in...' : 'Login'}
                         </Button>
@@ -282,9 +278,7 @@ export default function Login(props) {
                         <Button
                             fullWidth
                             variant="outlined"
-                            onClick={
-                                handleGoogleLogin
-                            }
+                            onClick={handleGoogleLogin}
                             startIcon={<GoogleIcon />}
                         >
                             Login with Google

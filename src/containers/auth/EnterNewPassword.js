@@ -55,7 +55,7 @@ const EContainer = styled(Stack)(({ theme }) => ({
     },
 }));
 
-function EnterNewPassword(props) {
+function EnterNewPassword() {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [loading, setLoading] = useState(false); // State để hiển thị loading

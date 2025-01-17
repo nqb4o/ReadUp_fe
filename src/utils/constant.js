@@ -3,4 +3,5 @@ export const path = {
     LOGIN: '/login',
     REGISTER: '/register',
     RESETPASSWORD: '/reset-password',
+    ADMIN: '/admin'
 };

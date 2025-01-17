@@ -9,8 +9,14 @@ import HomePage from "../containers/system/HomePage.js"
 import EnterNewPassword from "../containers/auth/EnterNewPassword.js"
 import { path } from "../utils/constant.js";
 import ProtectedRoute from "./ProtectedRoute.js";
+import AdminPage from "../containers/system/AdminPage.js"
 
 const router = createBrowserRouter([
+    {
+        path: path.HOME,
+        element:
+            <HomePage />
+    },
     {
         path: path.LOGIN,
         element:
@@ -20,19 +26,25 @@ const router = createBrowserRouter([
     },
     {
         path: path.REGISTER,
-        element: <Register />
-    },
-    {
-        path: path.HOME,
         element:
-            <PrivateRoute>
-                <HomePage />
-            </PrivateRoute>
+            <ProtectedRoute>
+                <Register />
+            </ProtectedRoute>
     },
     {
         path: path.RESETPASSWORD,
         element:
-            <EnterNewPassword />
+            <ProtectedRoute>
+                <EnterNewPassword />
+            </ProtectedRoute>
+    },
+    {
+        path: path.ADMIN,
+        element: (
+            <PrivateRoute requireAdmin={true}>
+                <AdminPage />
+            </PrivateRoute>
+        )
     }
 ]);
 

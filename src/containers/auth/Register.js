@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { path } from "../../utils/constant.js";
 import { handleRegisterApi, googleAuth, getGoogleDataApi } from '../../services/AuthService';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -64,6 +65,7 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function Register(props) {
+    const { login } = useAuth();
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
     const [passwordError, setPasswordError] = React.useState(false);
@@ -131,7 +133,8 @@ export default function Register(props) {
             const token = response.data.token;
             if (token) {
                 setRegisterSuccess(true)
-                sessionStorage.setItem('authToken', token);
+                await login(token);
+
                 // Chuyển hướng người dùng sang trang HOME
                 setTimeout(() => {
                     navigate(path.HOME);
@@ -163,7 +166,7 @@ export default function Register(props) {
                     )
 
                     const token = response.data.accessToken;
-                    sessionStorage.setItem("authToken", token);
+                    await login(token);
 
                     setRegisterSuccess(true);
 
