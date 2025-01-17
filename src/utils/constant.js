@@ -3,5 +3,6 @@ export const path = {
     LOGIN: '/login',
     REGISTER: '/register',
     RESETPASSWORD: '/reset-password',
-    ADMIN: '/admin'
+    ADMIN: '/admin',
+    BOOKDETAIL: '/book-detail/:book_id',
 };

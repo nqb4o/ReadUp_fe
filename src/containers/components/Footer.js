@@ -64,10 +64,10 @@ export default function Footer() {
                 gutterBottom
                 sx={{ fontWeight: 600, mt: 2 }}
               >
-                Join the newsletter
+                Muốn nhận những tin tức mới nhất?
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                Subscribe for weekly updates. No spams ever!
+                Hãy đăng ký ngay để nhận ngay những thông tin khuyến mại, những quà tặng độc đáo sớm nhất. Chúng tôi biết bạn cần nó!
               </Typography>
               <InputLabel htmlFor="email-newsletter">Email</InputLabel>
               <Stack direction="row" spacing={1} useFlexGap>
@@ -78,7 +78,7 @@ export default function Footer() {
                   variant="outlined"
                   fullWidth
                   aria-label="Enter your email address"
-                  placeholder="Your email address"
+                  placeholder="Email của bạn"
                   slotProps={{
                     htmlInput: {
                       autoComplete: 'off',
@@ -93,7 +93,7 @@ export default function Footer() {
                   size="small"
                   sx={{ flexShrink: 0 }}
                 >
-                  Subscribe
+                  Đăng ký ngay
                 </Button>
               </Stack>
             </Box>
@@ -106,10 +106,10 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Product
+              Ấn phẩm
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              Features
+              Tính năng
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
               Testimonials
@@ -132,10 +132,10 @@ export default function Footer() {
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              Company
+              Công ty
             </Typography>
             <Link color="text.secondary" variant="body2" href="#">
-              About us
+              Về tôi
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
               Careers
@@ -196,7 +196,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://github.com/mui"
+              href="https://github.com/"
               aria-label="GitHub"
               sx={{ alignSelf: 'center' }}
             >
@@ -205,7 +205,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://x.com/MaterialUI"
+              href="https://x.com/"
               aria-label="X"
               sx={{ alignSelf: 'center' }}
             >
@@ -214,7 +214,7 @@ export default function Footer() {
             <IconButton
               color="inherit"
               size="small"
-              href="https://www.linkedin.com/company/mui/"
+              href="https://www.linkedin.com/"
               aria-label="LinkedIn"
               sx={{ alignSelf: 'center' }}
             >

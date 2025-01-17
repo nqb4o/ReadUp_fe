@@ -2,14 +2,15 @@ import React from "react";
 import {
     createBrowserRouter,
 } from "react-router-dom";
+import { path } from "../utils/constant.js";
 import Login from "../containers/auth/Login.js";
 import Register from "../containers/auth/Register.js"
 import PrivateRoute from "./PrivateRoute.js";
 import HomePage from "../containers/system/HomePage.js"
 import EnterNewPassword from "../containers/auth/EnterNewPassword.js"
-import { path } from "../utils/constant.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 import AdminPage from "../containers/system/AdminPage.js"
+import BookPage from "../containers/system/BookPage.js"
 
 const router = createBrowserRouter([
     {
@@ -44,6 +45,12 @@ const router = createBrowserRouter([
             <PrivateRoute requireAdmin={true}>
                 <AdminPage />
             </PrivateRoute>
+        )
+    },
+    {
+        path: path.BOOKDETAIL,
+        element: (
+            <BookPage />
         )
     }
 ]);

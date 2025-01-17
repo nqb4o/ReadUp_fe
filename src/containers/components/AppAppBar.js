@@ -65,16 +65,16 @@ export default function AppAppBar() {
             <Sitemark />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button variant="text" color="info" size="small">
-                Features
+                Các tính năng
               </Button>
               <Button variant="text" color="info" size="small">
-                Testimonials
+                Lời chứng thực
               </Button>
               <Button variant="text" color="info" size="small">
-                Highlights
+                Điểm nhấn
               </Button>
               <Button variant="text" color="info" size="small">
-                Pricing
+                Giá
               </Button>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 FAQ
@@ -93,15 +93,15 @@ export default function AppAppBar() {
           >
             {token ? (
               <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
-                Logout
+                Đăng xuất
               </Button>
             ) : (
               <>
                 <Button color="primary" variant="text" size="small" onClick={() => navigate('/login')}>
-                  Sign in
+                  Đăng nhập
                 </Button>
                 <Button color="primary" variant="contained" size="small" onClick={() => navigate('/register')}>
-                  Sign up
+                  Đăng ký
                 </Button>
               </>
             )}
@@ -143,19 +143,19 @@ export default function AppAppBar() {
                 {token ? (
                   <MenuItem>
                     <Button color="primary" variant="contained" fullWidth onClick={handleLogout}>
-                      Logout
+                      Đăng xuất
                     </Button>
                   </MenuItem>
                 ) : (
                   <>
                     <MenuItem>
                       <Button color="primary" variant="contained" fullWidth onClick={() => navigate('/register')}>
-                        Sign up
+                        Đăng ký
                       </Button>
                     </MenuItem>
                     <MenuItem>
                       <Button color="primary" variant="outlined" fullWidth onClick={() => navigate('/login')}>
-                        Sign in
+                        Đăng nhập
                       </Button>
                     </MenuItem>
                   </>
