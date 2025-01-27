@@ -5,4 +5,5 @@ export const path = {
     RESETPASSWORD: '/reset-password',
     ADMIN: '/admin',
     BOOKDETAIL: '/book-detail/:book_id',
+    PAYMENT: '/payment'
 };

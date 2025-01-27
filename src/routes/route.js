@@ -11,6 +11,7 @@ import EnterNewPassword from "../containers/auth/EnterNewPassword.js"
 import ProtectedRoute from "./ProtectedRoute.js";
 import AdminPage from "../containers/system/AdminPage.js"
 import BookPage from "../containers/system/BookPage.js"
+import Payment from "../containers/system/Payment.js"
 
 const router = createBrowserRouter([
     {
@@ -51,6 +52,12 @@ const router = createBrowserRouter([
         path: path.BOOKDETAIL,
         element: (
             <BookPage />
+        )
+    },
+    {
+        path: path.PAYMENT,
+        element: (
+            <Payment />
         )
     }
 ]);

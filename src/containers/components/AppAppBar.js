@@ -1,20 +1,28 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import {
+  Box,
+  Divider,
+  Drawer,
+  Container,
+  MenuItem,
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Badge
+} from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import ColorModeIconDropdown from '../shared-theme/ColorModeIconDropdown';
 import Sitemark from './SitemarkIcon';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../contexts/CartContext';
+import CartDrawer from './CartDrawer';
+import FavoritesDrawer from './FavoritesDrawer';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -36,6 +44,9 @@ export default function AppAppBar() {
   const { logout } = useAuth();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
+  const { cartItemCount, favoritesCount } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -92,22 +103,49 @@ export default function AppAppBar() {
             }}
           >
             {token ? (
-              <Button color="primary" variant="contained" size="small" onClick={handleLogout}>
+              <Button color="primary" variant="outlined" size="small" onClick={handleLogout}>
                 Đăng xuất
               </Button>
             ) : (
-              <>
-                <Button color="primary" variant="text" size="small" onClick={() => navigate('/login')}>
-                  Đăng nhập
-                </Button>
-                <Button color="primary" variant="contained" size="small" onClick={() => navigate('/register')}>
-                  Đăng ký
-                </Button>
-              </>
+              <Button color="primary" variant="outlined" size="small" onClick={() => navigate('/login')}>
+                Đăng nhập
+              </Button>
             )}
+            <IconButton
+              aria-label="Shopping cart"
+              onClick={() => setCartOpen(true)}
+            >
+              <Badge badgeContent={cartItemCount} color="primary">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              aria-label="Favorites"
+              onClick={() => setFavoritesOpen(true)}
+            >
+              <Badge badgeContent={favoritesCount} color="primary">
+                <FavoriteIcon />
+              </Badge>
+            </IconButton>
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
+            <IconButton
+              aria-label="Shopping cart"
+              onClick={() => navigate('/cart')}
+            >
+              <Badge badgeContent={cartItemCount} color="primary">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              aria-label="Favorites"
+              onClick={() => navigate('/favorites')}
+            >
+              <Badge badgeContent={favoritesCount} color="primary">
+                <FavoriteIcon />
+              </Badge>
+            </IconButton>
             <ColorModeIconDropdown size="medium" />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
@@ -142,29 +180,30 @@ export default function AppAppBar() {
                 <Divider sx={{ my: 3 }} />
                 {token ? (
                   <MenuItem>
-                    <Button color="primary" variant="contained" fullWidth onClick={handleLogout}>
+                    <Button color="primary" variant="outlined" fullWidth onClick={handleLogout}>
                       Đăng xuất
                     </Button>
                   </MenuItem>
                 ) : (
-                  <>
-                    <MenuItem>
-                      <Button color="primary" variant="contained" fullWidth onClick={() => navigate('/register')}>
-                        Đăng ký
-                      </Button>
-                    </MenuItem>
-                    <MenuItem>
-                      <Button color="primary" variant="outlined" fullWidth onClick={() => navigate('/login')}>
-                        Đăng nhập
-                      </Button>
-                    </MenuItem>
-                  </>
+                  <MenuItem>
+                    <Button color="primary" variant="outlined" fullWidth onClick={() => navigate('/login')}>
+                      Đăng nhập
+                    </Button>
+                  </MenuItem>
                 )}
               </Box>
             </Drawer>
           </Box>
         </StyledToolbar>
       </Container>
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+      />
+      <FavoritesDrawer
+        open={favoritesOpen}
+        onClose={() => setFavoritesOpen(false)}
+      />
     </AppBar>
   );
 }
