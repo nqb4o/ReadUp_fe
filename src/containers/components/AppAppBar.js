@@ -14,14 +14,12 @@ import {
 import { alpha, styled } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ColorModeIconDropdown from '../shared-theme/ColorModeIconDropdown';
 import Sitemark from './SitemarkIcon';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
-import CartDrawer from './CartDrawer';
 import FavoritesDrawer from './FavoritesDrawer';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -112,14 +110,6 @@ export default function AppAppBar() {
               </Button>
             )}
             <IconButton
-              aria-label="Shopping cart"
-              onClick={() => setCartOpen(true)}
-            >
-              <Badge badgeContent={cartItemCount} color="primary">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
               aria-label="Favorites"
               onClick={() => setFavoritesOpen(true)}
             >
@@ -130,14 +120,6 @@ export default function AppAppBar() {
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
-            <IconButton
-              aria-label="Shopping cart"
-              onClick={() => navigate('/cart')}
-            >
-              <Badge badgeContent={cartItemCount} color="primary">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
             <IconButton
               aria-label="Favorites"
               onClick={() => navigate('/favorites')}
@@ -196,10 +178,6 @@ export default function AppAppBar() {
           </Box>
         </StyledToolbar>
       </Container>
-      <CartDrawer
-        open={cartOpen}
-        onClose={() => setCartOpen(false)}
-      />
       <FavoritesDrawer
         open={favoritesOpen}
         onClose={() => setFavoritesOpen(false)}

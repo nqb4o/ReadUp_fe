@@ -12,15 +12,12 @@ import {
     ListItemSecondaryAction,
     Divider,
 } from '@mui/material';
-import { Close, Delete, Favorite, ShoppingCart } from '@mui/icons-material';
+import { Close, Delete, Favorite } from '@mui/icons-material';
 import { useCart } from '../../contexts/CartContext';
 
 export default function FavoritesDrawer({ open, onClose }) {
-    const { favorites, toggleFavorite, addToCart } = useCart();
+    const { favorites, toggleFavorite } = useCart();
 
-    const handleAddToCart = (book) => {
-        addToCart(book);
-    };
 
     return (
         <Drawer
@@ -63,13 +60,6 @@ export default function FavoritesDrawer({ open, onClose }) {
                                     secondary={`${item.author_first_name} ${item.author_last_name}`}
                                 />
                                 <ListItemSecondaryAction>
-                                    <IconButton
-                                        edge="end"
-                                        onClick={() => handleAddToCart(item)}
-                                        sx={{ mr: 1 }}
-                                    >
-                                        <ShoppingCart />
-                                    </IconButton>
                                     <IconButton edge="end" onClick={() => toggleFavorite(item)}>
                                         <Delete />
                                     </IconButton>

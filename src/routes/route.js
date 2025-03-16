@@ -10,8 +10,7 @@ import HomePage from "../containers/system/HomePage.js"
 import EnterNewPassword from "../containers/auth/EnterNewPassword.js"
 import ProtectedRoute from "./ProtectedRoute.js";
 import AdminPage from "../containers/system/AdminPage.js"
-import BookPage from "../containers/system/BookPage.js"
-import Payment from "../containers/system/Payment.js"
+import ReadingPage from "../containers/system/ReadingPage.js"
 
 const router = createBrowserRouter([
     {
@@ -49,15 +48,9 @@ const router = createBrowserRouter([
         )
     },
     {
-        path: path.BOOKDETAIL,
+        path: path.ARTICLEDETAIL,
         element: (
-            <BookPage />
-        )
-    },
-    {
-        path: path.PAYMENT,
-        element: (
-            <Payment />
+            <ReadingPage />
         )
     }
 ]);

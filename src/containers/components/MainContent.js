@@ -86,7 +86,7 @@ export default function MainContent() {
   };
 
   const handleCardClick = (bookId) => {
-    navigate(`/book-detail/${bookId}`);
+    navigate(`/article/${bookId}`);
   };
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function MainContent() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
-          NBrain
+          ReadUp
         </Typography>
         <Typography>Thư viện sách tích hợp AI giúp mua sắm sách hiệu quả</Typography>
       </div>
