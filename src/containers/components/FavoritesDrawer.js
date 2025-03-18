@@ -42,7 +42,7 @@ export default function FavoritesDrawer({ open, onClose }) {
 
                 {favorites.length === 0 ? (
                     <Typography color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
-                        Chưa có sách yêu thích
+                        Chưa có bài báo yêu thích
                     </Typography>
                 ) : (
                     <List>

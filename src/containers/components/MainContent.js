@@ -112,7 +112,7 @@ export default function MainContent() {
         <Typography variant="h1" gutterBottom>
           ReadUp
         </Typography>
-        <Typography>Thư viện sách tích hợp AI giúp mua sắm sách hiệu quả</Typography>
+        <Typography>Ứng dụng học tiếng anh tích hợp AI giúp mua sắm học Reading hiệu quả</Typography>
       </div>
       <Box
         sx={{
