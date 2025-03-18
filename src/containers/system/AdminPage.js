@@ -1,7 +1,7 @@
 import React from 'react';
 import Container from '@mui/material/Container';
 import AppTheme from '../shared-theme/AppTheme';
-import BookManagement from '../components/BookManagement';
+import ArticleManagement from '../components/ArticleManagement';
 import AppAppBar from '../components/AppAppBar';
 
 function AdminPage(props) {
@@ -14,7 +14,7 @@ function AdminPage(props) {
                 component="main"
                 sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
             >
-                <BookManagement />
+                <ArticleManagement />
             </Container>
         </AppTheme >
     );

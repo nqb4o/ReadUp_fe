@@ -47,7 +47,7 @@ export default function FavoritesDrawer({ open, onClose }) {
                 ) : (
                     <List>
                         {favorites.map((item) => (
-                            <ListItem key={item.book_id} sx={{ py: 2 }}>
+                            <ListItem key={item.id} sx={{ py: 2 }}>
                                 <ListItemAvatar>
                                     <Avatar
                                         variant="rounded"

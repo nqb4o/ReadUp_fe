@@ -14,8 +14,8 @@ import { styled } from '@mui/material/styles';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import {
-  fetchBookApi
-} from '../../services/BookService';
+  fetchArticleApi
+} from '../../services/ArticleService';
 import { useNavigate } from 'react-router-dom';
 
 const SyledCard = styled(Card)(({ theme }) => ({
@@ -76,7 +76,7 @@ export function Search() {
 }
 
 export default function MainContent() {
-  const [books, setBooks] = useState([]);
+  const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -85,24 +85,24 @@ export default function MainContent() {
     console.info('You clicked the filter chip.');
   };
 
-  const handleCardClick = (bookId) => {
-    navigate(`/article/${bookId}`);
+  const handleCardClick = (id) => {
+    navigate(`/article/${id}`);
   };
 
   useEffect(() => {
     setTimeout(() => {
-      const fetchBooksData = async () => {
+      const fetchArticlesData = async () => {
         try {
           setLoading(true);
-          const response = await fetchBookApi();
-          setBooks(response.data);
+          const response = await fetchArticleApi();
+          setArticles(response.data);
         } catch (error) {
           setError(error.message || 'Không thể tải danh sách sách');
         } finally {
           setLoading(false);
         }
       };
-      fetchBooksData();
+      fetchArticlesData();
     }, 1500);
   }, []);
 
@@ -201,11 +201,11 @@ export default function MainContent() {
         </Box>
       </Box>
       <Grid container spacing={2} columns={12}>
-        {books.map((book) => (
-          <Grid size={{ xs: 12, md: 3 }} key={book.book_id}>
+        {articles.map((article) => (
+          <Grid size={{ xs: 12, md: 3 }} key={article.id}>
             <SyledCard
               variant="outlined"
-              onClick={() => handleCardClick(book.book_id)}
+              onClick={() => handleCardClick(article.id)}
             >
               <CardMedia
                 component="img"
@@ -222,7 +222,7 @@ export default function MainContent() {
                   tag
                 </Typography>
                 <Typography gutterBottom variant="h6" component="div">
-                  {book.title}
+                  {article.title}
                 </Typography>
                 <StyledTypography variant="body2" color="text.secondary" gutterBottom>
                   description

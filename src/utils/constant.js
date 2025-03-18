@@ -4,6 +4,6 @@ export const path = {
     REGISTER: '/register',
     RESETPASSWORD: '/reset-password',
     ADMIN: '/admin',
-    ARTICLEDETAIL: '/article/:book_id',
+    ARTICLEDETAIL: '/article/:id',
     PAYMENT: '/payment'
 };

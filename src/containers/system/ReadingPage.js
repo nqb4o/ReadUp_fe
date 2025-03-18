@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getBookByIdApi } from '../../services/BookService';
+import { getArticleByIdApi } from '../../services/ArticleService';
 import AppTheme from '../shared-theme/AppTheme';
 import AppAppBar from '../components/AppAppBar';
 import Footer from '../components/Footer';
@@ -16,8 +16,6 @@ import {
     Paper,
     Divider,
     Chip,
-    ImageList,
-    ImageListItem,
     Container
 } from '@mui/material';
 import {
@@ -29,9 +27,9 @@ import {
 } from '@mui/icons-material';
 import { useCart } from '../../contexts/CartContext';
 
-export default function BookPage(props) {
-    const { book_id } = useParams();
-    const [book, setBook] = useState(null);
+export default function ArticlePage(props) {
+    const { id } = useParams();
+    const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isFavorite, setIsFavorite] = useState(false);
     const { toggleFavorite, favorites } = useCart();
@@ -40,7 +38,7 @@ export default function BookPage(props) {
     const review = {
         title: "Review: 'Atomic Habits' - Nghệ thuật thay đổi tư duy và thiết lập thói quen",
         author: "Nguyễn Thanh Tùng",
-        authorRole: "Book Reviewer",
+        authorRole: "Article Reviewer",
         publishDate: "18 tháng 1, 2025",
         readingTime: "8 phút đọc",
         authorAvatar: "https://i.pravatar.cc/150?img=3",
@@ -53,39 +51,39 @@ export default function BookPage(props) {
         ]
     };
     useEffect(() => {
-        const fetchBookDetails = async () => {
+        const fetchArticleDetails = async () => {
             try {
                 setLoading(true);
-                const response = await getBookByIdApi(book_id);
-                setBook(response.data);
+                const response = await getArticleByIdApi(id);
+                setArticle(response.data);
             } catch (error) {
-                console.error('Failed to fetch book details:', error);
+                console.error('Failed to fetch article details:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchBookDetails();
-    }, [book_id]);
+        fetchArticleDetails();
+    }, [id]);
 
     useEffect(() => {
-        if (book) {
-            setIsFavorite(favorites.some(item => item.id === book.id));
+        if (article) {
+            setIsFavorite(favorites.some(item => item.id === article.id));
         }
-    }, [favorites, book]);
+    }, [favorites, article]);
 
     const handleToggleFavorite = () => {
-        toggleFavorite(book);
+        toggleFavorite(article);
         setSnackbarMessage(isFavorite ? 'Đã xóa khỏi danh sách yêu thích' : 'Đã thêm vào danh sách yêu thích');
         setOpenSnackbar(true);
     };
 
     if (loading) {
-        return <div>Loading book details...</div>;
+        return <div>Loading article details...</div>;
     }
 
-    if (!book) {
-        return <div>Book not found.</div>;
+    if (!article) {
+        return <div>article not found.</div>;
     }
 
     return (
@@ -125,29 +123,31 @@ export default function BookPage(props) {
                     alignItems: 'center',
                     gap: 2,
                     marginBottom: 4,
-                    flexWrap: 'wrap'
+                    justifyContent: 'space-between'
                 }}>
-                    <Avatar
-                        src={review.authorAvatar}
-                        sx={{ width: 56, height: 56 }}
-                    />
-                    <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Person sx={{ fontSize: 20, color: 'primary.main' }} />
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                                {review.author}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar
+                            src={review.authorAvatar}
+                            sx={{ width: 56, height: 56 }}
+                        />
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Person sx={{ fontSize: 20, color: 'primary.main' }} />
+                                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                                    {review.author}
+                                </Typography>
+                            </Box>
+                            <Typography variant="body2" color="text.secondary">
+                                {review.authorRole}
                             </Typography>
                         </Box>
-                        <Typography variant="body2" color="text.secondary">
-                            {review.authorRole}
-                        </Typography>
-                    </Box>
-                    <Divider orientation="vertical" flexItem />
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <AccessTime sx={{ fontSize: 20, color: 'text.secondary' }} />
-                        <Typography variant="body2" color="text.secondary">
-                            {review.publishDate} • {review.readingTime}
-                        </Typography>
+                        <Divider orientation="vertical" flexItem />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <AccessTime sx={{ fontSize: 20, color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary">
+                                {review.publishDate} • {review.readingTime}
+                            </Typography>
+                        </Box>
                     </Box>
                     <Tooltip title={isFavorite ? "Bỏ yêu thích" : "Yêu thích"}>
                         <IconButton
@@ -161,26 +161,6 @@ export default function BookPage(props) {
                         </IconButton>
                     </Tooltip>
                 </Box>
-
-                {/* Cover Image */}
-                <Paper
-                    elevation={4}
-                    sx={{
-                        marginBottom: 4,
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                    }}
-                >
-                    <img
-                        src={review.coverImage}
-                        alt="Book Cover"
-                        style={{
-                            width: '100%',
-                            height: '400px',
-                            objectFit: 'cover',
-                        }}
-                    />
-                </Paper>
 
                 {/* Introduction */}
                 <Typography
@@ -199,87 +179,6 @@ export default function BookPage(props) {
                 <Box sx={{ marginY: 4 }}>
                     <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
                         Trong thế giới ngày càng phức tạp và đầy áp lực, việc hình thành và duy trì những thói quen tích cực trở nên quan trọng hơn bao giờ hết. James Clear, với "Atomic Habits", đã mang đến một cách tiếp cận mới mẻ và khoa học về việc xây dựng thói quen, dựa trên những nghiên cứu sâu rộng về tâm lý học và khoa học thần kinh.
-                    </Typography>
-
-                    <Typography variant="h4" sx={{ fontWeight: 700, marginY: 3 }}>
-                        Những điểm nổi bật của cuốn sách
-                    </Typography>
-
-                    <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
-                        Điều đặc biệt của "Atomic Habits" nằm ở cách tác giả phân tích các thói quen thành những đơn vị nhỏ nhất, hay "nguyên tử". Clear chỉ ra rằng, những thay đổi nhỏ 1% mỗi ngày sẽ tích lũy thành những kết quả đáng kinh ngạc theo thời gian. Cuốn sách được chia thành bốn quy luật cơ bản của việc thay đổi thói quen: làm nó rõ ràng, làm nó hấp dẫn, làm nó dễ dàng và làm nó thỏa mãn.
-                    </Typography>
-
-                    {/* Image Gallery */}
-                    <Paper
-                        elevation={3}
-                        sx={{
-                            padding: 2,
-                            marginY: 4,
-                            backgroundColor: 'rgba(0, 0, 0, 0.02)'
-                        }}
-                    >
-                        <ImageList cols={3} gap={16}>
-                            {review.galleryImages.map((img, index) => (
-                                <ImageListItem key={index}>
-                                    <img
-                                        src={img}
-                                        alt={`Gallery ${index + 1}`}
-                                        style={{
-                                            borderRadius: 8,
-                                            height: '200px',
-                                            width: '100%',
-                                            objectFit: 'cover'
-                                        }}
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
-                    </Paper>
-
-                    <Typography variant="h4" sx={{ fontWeight: 700, marginY: 3 }}>
-                        Đánh giá chuyên sâu
-                    </Typography>
-
-                    <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
-                        Một trong những điểm mạnh nhất của cuốn sách là cách Clear kết hợp giữa lý thuyết và thực hành. Mỗi chương đều có những ví dụ cụ thể và các bài tập thực hành giúp độc giả có thể áp dụng ngay lập tức. Tác giả cũng đưa ra những công cụ theo dõi thói quen và các mẫu biểu đơn giản, giúp việc xây dựng thói quen mới trở nên dễ dàng và có hệ thống hơn.
-                    </Typography>
-
-                    <Box sx={{
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        padding: 3,
-                        borderRadius: 2,
-                        marginY: 4
-                    }}>
-                        <Typography variant="h6" sx={{ marginBottom: 2, fontWeight: 600 }}>
-                            Điểm đánh giá
-                        </Typography>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Typography variant="body1">Nội dung:</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 600 }}>9.5/10</Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography variant="body1">Cách trình bày:</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 600 }}>9/10</Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography variant="body1">Tính thực tiễn:</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 600 }}>9.5/10</Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography variant="body1">Giá trị tổng thể:</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 600 }}>9.3/10</Typography>
-                            </Grid>
-                        </Grid>
-                    </Box>
-
-                    <Typography variant="h4" sx={{ fontWeight: 700, marginY: 3 }}>
-                        Kết luận
-                    </Typography>
-
-                    <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
-                        "Atomic Habits" là một cuốn sách đáng đọc cho bất kỳ ai muốn cải thiện cuộc sống thông qua việc xây dựng thói quen tốt. Với cách viết rõ ràng, súc tích và đầy thuyết phục, James Clear đã tạo ra một tác phẩm không chỉ mang tính giáo dục mà còn truyền cảm hứng mạnh mẽ. Đây chắc chắn là một trong những cuốn sách hay nhất về chủ đề phát triển bản thân trong những năm gần đây.
                     </Typography>
                 </Box>
 
@@ -319,7 +218,7 @@ export default function BookPage(props) {
                                 Về tác giả
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                                {review.author} là một book reviewer với hơn 5 năm kinh nghiệm trong lĩnh vực sách self-help và phát triển bản thân. Anh đã review hơn 200 cuốn sách và là tác giả của blog "Đọc Sách Mỗi Ngày".
+                                {review.author} là một article reviewer với hơn 5 năm kinh nghiệm trong lĩnh vực sách self-help và phát triển bản thân. Anh đã review hơn 200 cuốn sách và là tác giả của blog "Đọc Sách Mỗi Ngày".
                             </Typography>
                         </Box>
                     </Box>
