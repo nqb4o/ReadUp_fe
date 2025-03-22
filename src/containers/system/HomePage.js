@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import AppTheme from '../shared-theme/AppTheme';
 import AppAppBar from '../components/AppAppBar';
-import MainContent from '../components/MainContent';
-import Latest from '../components/Latest';
 import Footer from '../components/Footer';
+import { Outlet } from 'react-router-dom';
+import ScrollToTop from '../../utils/scrollToTop';
+import ChatBox from '../components/ChatBox';
+import TranslationPopper from '../components/TranslationPopper';
 
 export default function HomePage(props) {
   return (
@@ -15,10 +17,12 @@ export default function HomePage(props) {
       <Container
         maxWidth="lg"
         component="main"
-        sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+        sx={{ display: 'flex', flexDirection: 'column', marginTop: 16, marginBottom: 4, gap: 4 }}
       >
-        <MainContent />
-        <Latest />
+        <ScrollToTop />
+        <Outlet />
+        <ChatBox />
+        <TranslationPopper />
       </Container>
       <Footer />
     </AppTheme>
