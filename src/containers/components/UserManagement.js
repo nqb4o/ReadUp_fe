@@ -16,6 +16,7 @@ import {
     MenuItem,
     TextField,
     TablePagination,
+    Avatar,
     InputAdornment,
     Typography,
     Modal,
@@ -28,85 +29,87 @@ import {
     Search as SearchIcon,
 } from "@mui/icons-material";
 
-const ArticleManagement = () => {
-    const initialArticles = [
+const UserManagement = () => {
+    const initialUsers = [
         {
             id: 1,
-            title: "Introduction to UI Design",
-            content: "Learn the basics of UI design and its principles.",
-            publicationDate: "2023-01-20",
+            username: "adam_trantow",
+            email: "adam.trantow@example.com",
+            role: "UI Designer",
             createdAt: "2023-01-15",
-            updatedAt: "2023-01-18",
+            avatar: "https://randomuser.me/api/portraits/men/1.jpg",
         },
         {
             id: 2,
-            title: "Advanced React Techniques",
-            content: "Explore advanced techniques in React development.",
-            publicationDate: "2023-02-25",
+            username: "angel_rolfson",
+            email: "angel.rolfson@example.com",
+            role: "UI Designer",
             createdAt: "2023-02-20",
-            updatedAt: "2023-02-22",
+            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
         },
         {
             id: 3,
-            title: "CSS Grid vs Flexbox",
-            content:
-                "A comparison of CSS Grid and Flexbox for layouts. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
-            publicationDate: "2023-03-15",
+            username: "betty_hammes",
+            email: "betty.hammes@example.com",
+            role: "UI Designer",
             createdAt: "2023-03-10",
-            updatedAt: "2023-03-12",
+            avatar: "https://randomuser.me/api/portraits/women/3.jpg",
         },
         {
             id: 4,
-            title: "JavaScript Best Practices",
-            content: "Best practices for writing clean JavaScript code.",
-            publicationDate: "2023-04-10",
+            username: "billy_braun",
+            email: "billy.braun@example.com",
+            role: "UI Designer",
             createdAt: "2023-04-05",
-            updatedAt: "2023-04-08",
+            avatar: "https://randomuser.me/api/portraits/men/4.jpg",
         },
         {
             id: 5,
-            title: "Building Scalable Apps",
-            content: "Tips for building scalable web applications.",
-            publicationDate: "2023-05-15",
+            username: "billy_stoltenberg",
+            email: "billy.stoltenberg@example.com",
+            role: "Leader",
             createdAt: "2023-05-12",
-            updatedAt: "2023-05-14",
+            avatar: "https://randomuser.me/api/portraits/men/5.jpg",
         },
     ];
 
-    const [articles, setArticles] = useState(initialArticles);
+    const [users, setUsers] = useState(initialUsers);
     const [searchTerm, setSearchTerm] = useState("");
     const [order, setOrder] = useState("asc");
     const [selected, setSelected] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedArticle, setSelectedArticle] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
     const [openModal, setOpenModal] = useState(false);
     const [modalMode, setModalMode] = useState("add");
     const [formData, setFormData] = useState({
-        title: "",
-        content: "",
-        publicationDate: "",
+        username: "",
+        email: "",
+        role: "",
         createdAt: "",
-        updatedAt: "",
+        avatar: null,
     });
+    const [avatarPreview, setAvatarPreview] = useState(null);
 
-    const filteredArticles = articles.filter((article) =>
-        article.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredUsers = users.filter((user) =>
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSort = () => {
         const isAsc = order === "asc";
         setOrder(isAsc ? "desc" : "asc");
-        const sortedArticles = [...filteredArticles].sort((a, b) =>
-            isAsc ? b.title.localeCompare(a.title) : a.title.localeCompare(b.title)
+        const sortedUsers = [...filteredUsers].sort((a, b) =>
+            isAsc
+                ? b.username.localeCompare(a.username)
+                : a.username.localeCompare(b.username)
         );
-        setArticles(sortedArticles);
+        setUsers(sortedUsers);
     };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            setSelected(filteredArticles.map((article) => article.id));
+            setSelected(filteredUsers.map((user) => user.id));
         } else {
             setSelected([]);
         }
@@ -132,34 +135,37 @@ const ArticleManagement = () => {
         setSelected(newSelected);
     };
 
-    const handleMenuClick = (event, article) => {
+    const handleMenuClick = (event, user) => {
         setAnchorEl(event.currentTarget);
-        setSelectedArticle(article);
+        setSelectedUser(user);
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        setSelectedArticle(null);
+        setSelectedUser(null);
     };
 
-    const handleOpenModal = (mode, article = null) => {
+    const handleOpenModal = (mode, user = null) => {
         setModalMode(mode);
-        if (mode === "edit" && article) {
-            setFormData({ ...article });
+        if (mode === "edit" && user) {
+            setFormData({ ...user });
+            setAvatarPreview(user.avatar);
         } else {
             setFormData({
-                title: "",
-                content: "",
-                publicationDate: "",
+                username: "",
+                email: "",
+                role: "",
                 createdAt: "",
-                updatedAt: "",
+                avatar: null,
             });
+            setAvatarPreview(null);
         }
         setOpenModal(true);
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
+        setAvatarPreview(null);
     };
 
     const handleFormChange = (e) => {
@@ -167,17 +173,35 @@ const ArticleManagement = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData((prev) => ({ ...prev, avatar: file }));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = () => {
         if (modalMode === "add") {
-            const newArticle = {
+            const newUser = {
                 ...formData,
-                id: articles.length + 1,
+                id: users.length + 1,
+                avatar:
+                    avatarPreview ||
+                    formData.avatar ||
+                    "https://randomuser.me/api/portraits/lego/1.jpg",
             };
-            setArticles([...articles, newArticle]);
+            setUsers([...users, newUser]);
         } else if (modalMode === "edit") {
-            setArticles(
-                articles.map((article) =>
-                    article.id === formData.id ? { ...formData } : article
+            setUsers(
+                users.map((user) =>
+                    user.id === formData.id
+                        ? { ...formData, avatar: avatarPreview || formData.avatar }
+                        : user
                 )
             );
         }
@@ -185,14 +209,12 @@ const ArticleManagement = () => {
     };
 
     const handleDelete = () => {
-        setArticles(
-            articles.filter((article) => article.id !== selectedArticle.id)
-        );
+        setUsers(users.filter((user) => user.id !== selectedUser.id));
         handleMenuClose();
     };
 
     const handleDeleteSelected = () => {
-        setArticles(articles.filter((article) => !selected.includes(article.id)));
+        setUsers(users.filter((user) => !selected.includes(user.id)));
         setSelected([]);
     };
 
@@ -213,14 +235,14 @@ const ArticleManagement = () => {
         <Box sx={{ p: 0 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
                 <Typography variant="h5" component="h1">
-                    Articles
+                    Users
                 </Typography>
                 <Button
                     variant="contained"
                     startIcon={<Add />}
                     onClick={() => handleOpenModal("add")}
                 >
-                    New article
+                    New user
                 </Button>
             </Box>
 
@@ -257,7 +279,7 @@ const ArticleManagement = () => {
                 }}
             >
                 <TextField
-                    placeholder="Search article..."
+                    placeholder="Search user..."
                     fullWidth
                     margin="normal"
                     value={searchTerm}
@@ -302,57 +324,61 @@ const ArticleManagement = () => {
                         },
                     }}
                 >
-                    <Table stickyHeader sx={{ minWidth: 800 }}>
+                    <Table stickyHeader sx={{ minWidth: 600 }}>
                         <TableHead>
                             <TableRow>
                                 <TableCell padding="checkbox">
                                     <Checkbox
                                         indeterminate={
                                             selected.length > 0 &&
-                                            selected.length < filteredArticles.length
+                                            selected.length < filteredUsers.length
                                         }
                                         checked={
-                                            filteredArticles.length > 0 &&
-                                            selected.length === filteredArticles.length
+                                            filteredUsers.length > 0 &&
+                                            selected.length === filteredUsers.length
                                         }
                                         onChange={handleSelectAllClick}
                                     />
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel active direction={order} onClick={handleSort}>
-                                        Title
+                                        Username
                                     </TableSortLabel>
                                 </TableCell>
-                                <TableCell>Content</TableCell>
-                                <TableCell>Publication Date</TableCell>
+                                <TableCell>Email</TableCell>
+                                <TableCell>Role</TableCell>
                                 <TableCell>Created At</TableCell>
-                                <TableCell>Updated At</TableCell>
                                 <TableCell />
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredArticles
+                            {filteredUsers
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((article) => (
-                                    <TableRow key={article.id} hover>
+                                .map((user) => (
+                                    <TableRow key={user.id} hover>
                                         <TableCell padding="checkbox">
                                             <Checkbox
-                                                checked={selected.indexOf(article.id) !== -1}
-                                                onChange={() => handleSelectClick(article.id)}
+                                                checked={selected.indexOf(user.id) !== -1}
+                                                onChange={() => handleSelectClick(user.id)}
                                             />
                                         </TableCell>
-                                        <TableCell>{article.title}</TableCell>
                                         <TableCell>
-                                            {article.content.length > 50
-                                                ? `${article.content.substring(0, 50)}...`
-                                                : article.content}
+                                            <Box
+                                                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                                            >
+                                                <Avatar
+                                                    src={user.avatar}
+                                                    sx={{ width: 28, height: 28 }}
+                                                />
+                                                {user.username}
+                                            </Box>
                                         </TableCell>
-                                        <TableCell>{article.publicationDate}</TableCell>
-                                        <TableCell>{article.createdAt}</TableCell>
-                                        <TableCell>{article.updatedAt}</TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>{user.role}</TableCell>
+                                        <TableCell>{user.createdAt}</TableCell>
                                         <TableCell>
                                             <IconButton
-                                                onClick={(e) => handleMenuClick(e, article)}
+                                                onClick={(e) => handleMenuClick(e, user)}
                                                 sx={{ border: "unset", backgroundColor: "transparent" }}
                                             >
                                                 <MoreVertIcon />
@@ -360,8 +386,8 @@ const ArticleManagement = () => {
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                            {filteredArticles.length > 0 &&
-                                filteredArticles.slice(
+                            {filteredUsers.length > 0 &&
+                                filteredUsers.slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
                                 ).length < rowsPerPage &&
@@ -369,7 +395,7 @@ const ArticleManagement = () => {
                                     {
                                         length:
                                             rowsPerPage -
-                                            filteredArticles.slice(
+                                            filteredUsers.slice(
                                                 page * rowsPerPage,
                                                 page * rowsPerPage + rowsPerPage
                                             ).length,
@@ -379,7 +405,7 @@ const ArticleManagement = () => {
                                             key={`empty-${index}`}
                                             style={{ height: rowHeight }}
                                         >
-                                            <TableCell colSpan={7} />
+                                            <TableCell colSpan={6} />
                                         </TableRow>
                                     )
                                 )}
@@ -391,7 +417,7 @@ const ArticleManagement = () => {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={filteredArticles.length}
+                count={filteredUsers.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -405,7 +431,7 @@ const ArticleManagement = () => {
                 anchorOrigin={{ vertical: "top", horizontal: "left" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-                <MenuItem onClick={() => handleOpenModal("edit", selectedArticle)}>
+                <MenuItem onClick={() => handleOpenModal("edit", selectedUser)}>
                     <Edit sx={{ mr: 1 }} /> Edit
                 </MenuItem>
                 <MenuItem onClick={handleDelete} sx={{ color: "#d32f2f" }}>
@@ -435,12 +461,12 @@ const ArticleManagement = () => {
                         gutterBottom
                         sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                     >
-                        {modalMode === "add" ? "Add New Article" : "Edit Article"}
+                        {modalMode === "add" ? "Add New User" : "Edit User"}
                     </Typography>
                     <TextField
-                        label="Title"
-                        name="title"
-                        value={formData.title}
+                        label="Username"
+                        name="username"
+                        value={formData.username}
                         onChange={handleFormChange}
                         fullWidth
                         margin="normal"
@@ -459,22 +485,15 @@ const ArticleManagement = () => {
                         }}
                     />
                     <TextField
-                        label="Content"
-                        name="content"
-                        value={formData.content}
+                        label="Email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleFormChange}
                         fullWidth
-                        multiline
                         margin="normal"
                         variant="outlined"
-                        maxRows={4}
                         sx={{
                             "& .MuiOutlinedInput-root": {
-                                minHeight: "100px",
-                                alignItems: "flex-start",
-                                "& textarea": {
-                                    paddingTop: "0px",
-                                },
                                 "& fieldset": { borderColor: "grey.400" },
                                 "&:hover fieldset": { borderColor: "grey.600" },
                                 "&.Mui-focused fieldset": {
@@ -487,15 +506,13 @@ const ArticleManagement = () => {
                         }}
                     />
                     <TextField
-                        label="Publication Date"
-                        name="publicationDate"
-                        type="date"
-                        value={formData.publicationDate}
+                        label="Role"
+                        name="role"
+                        value={formData.role}
                         onChange={handleFormChange}
                         fullWidth
                         margin="normal"
                         variant="outlined"
-                        InputLabelProps={{ shrink: true }}
                         sx={{
                             "& .MuiOutlinedInput-root": {
                                 "& fieldset": { borderColor: "grey.400" },
@@ -532,29 +549,32 @@ const ArticleManagement = () => {
                             "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
                         }}
                     />
-                    <TextField
-                        label="Updated At"
-                        name="updatedAt"
-                        type="date"
-                        value={formData.updatedAt}
-                        onChange={handleFormChange}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        InputLabelProps={{ shrink: true }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& fieldset": { borderColor: "grey.400" },
-                                "&:hover fieldset": { borderColor: "grey.600" },
-                                "&.Mui-focused fieldset": {
-                                    borderColor: "grey.400",
-                                    boxShadow: "none",
-                                },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                            "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
-                        }}
-                    />
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" gutterBottom>
+                            Avatar
+                        </Typography>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: { xs: "column", sm: "row" },
+                                alignItems: { xs: "stretch", sm: "center" },
+                                gap: 2,
+                            }}
+                        >
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                                style={{ flex: 1 }}
+                            />
+                            {avatarPreview && (
+                                <Avatar
+                                    src={avatarPreview}
+                                    sx={{ width: 56, height: 56, alignSelf: "center" }}
+                                />
+                            )}
+                        </Box>
+                    </Box>
                     <Box
                         sx={{
                             display: "flex",
@@ -585,4 +605,4 @@ const ArticleManagement = () => {
     );
 };
 
-export default ArticleManagement;
+export default UserManagement;

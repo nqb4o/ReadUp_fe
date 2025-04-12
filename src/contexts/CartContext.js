@@ -1,104 +1,53 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
-export function CartProvider({ children }) {
-    const [cartItems, setCartItems] = useState(() => {
-        const saved = localStorage.getItem('cartItems');
-        return saved ? JSON.parse(saved) : [];
-    });
+export const CartProvider = ({ children }) => {
+    const [cartItems, setCartItems] = useState([]);
+    const [favorites, setFavorites] = useState([]);
 
-    const [favorites, setFavorites] = useState(() => {
-        const saved = localStorage.getItem('favorites');
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    useEffect(() => {
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-    }, [cartItems]);
-
-    useEffect(() => {
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-    }, [favorites]);
-
-    const addToCart = (book) => {
-        setCartItems(prev => {
-            const existing = prev.find(item => item.id === book.book_id);
-            if (existing) {
-                return prev.map(item =>
-                    item.id === book.book_id ? { ...item, quantity: item.quantity + 1 } : item
-                );
-            }
-            return [...prev, { ...book, quantity: 1 }];
-        });
-    };
-
-    const removeFromCart = (bookId) => {
-        setCartItems(prev => prev.filter(item => item.book_id !== bookId));
-    };
-
-    const toggleFavorite = (book) => {
-        setFavorites(prev => {
-            const exists = prev.some(item => item.book_id === book.book_id);
-            if (exists) {
-                return prev.filter(item => item.book_id !== book.book_id);
-            }
-            return [...prev, book];
-        });
-    };
-
-    const updateQuantity = (bookId, newQuantity) => {
-        if (newQuantity < 1) return; // Prevent negative quantities
-        setCartItems(prev =>
-            prev.map(item =>
-                item.book_id === bookId
-                    ? { ...item, quantity: newQuantity }
-                    : item
-            )
-        );
-    };
-
-    const incrementQuantity = (bookId) => {
-        setCartItems(prev =>
-            prev.map(item =>
-                item.book_id === bookId
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            )
-        );
-    };
-
-    const decrementQuantity = (bookId) => {
-        setCartItems(prev =>
-            prev.map(item =>
-                item.book_id === bookId && item.quantity > 1
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item
-            )
-        );
-    };
-
-    const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    // Tính số lượng từ yêu thích
     const favoritesCount = favorites.length;
 
-    return (
-        <CartContext.Provider value={{
-            cartItems,
-            favorites,
-            cartItemCount,
-            favoritesCount,
-            addToCart,
-            removeFromCart,
-            toggleFavorite,
-            updateQuantity,
-            incrementQuantity,
-            decrementQuantity,
-        }}>
-            {children}
-        </CartContext.Provider>
-    );
-}
+    // Thêm từ vào wishlist
+    const addToFavorites = (item) => {
+        setFavorites((prev) => {
+            if (!prev.some((fav) => fav.word === item.word)) {
+                return [...prev, item];
+            }
+            return prev;
+        });
+    };
 
-export function useCart() {
-    return useContext(CartContext);
-}
+    // Xóa từ khỏi wishlist
+    const removeFromFavorites = (word) => {
+        setFavorites((prev) => prev.filter((item) => item.word !== word));
+    };
+
+    // Kiểm tra xem từ có trong wishlist không
+    const isFavorite = (word) => {
+        return favorites.some((item) => item.word === word);
+    };
+
+    // Giá trị context
+    const value = {
+        cartItems,
+        setCartItems,
+        cartItemCount: cartItems.length,
+        favorites,
+        favoritesCount,
+        addToFavorites,
+        removeFromFavorites,
+        isFavorite,
+    };
+
+    return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+};
+
+export const useCart = () => {
+    const context = useContext(CartContext);
+    if (!context) {
+        throw new Error("useCart must be used within a CartProvider");
+    }
+    return context;
+};

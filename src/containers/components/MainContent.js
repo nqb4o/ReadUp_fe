@@ -1,237 +1,175 @@
-import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid2';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import { styled } from '@mui/material/styles';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
-import {
-  fetchArticleApi
-} from '../../services/ArticleService';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
+import InputAdornment from "@mui/material/InputAdornment";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import RssFeedRoundedIcon from "@mui/icons-material/RssFeedRounded";
 
-const SyledCard = styled(Card)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  padding: 0,
-  height: '100%',
-  backgroundColor: (theme.vars || theme).palette.background.paper,
-  '&:hover': {
-    backgroundColor: 'transparent',
-    cursor: 'pointer',
-  },
-  '&:focus-visible': {
-    outline: '3px solid',
-    outlineColor: 'hsla(210, 98%, 48%, 0.5)',
-    outlineOffset: '2px',
-  },
-}));
+export function Search({ onSearch }) {
+  const [searchTerm, setSearchTerm] = useState("");
 
-const SyledCardContent = styled(CardContent)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 4,
-  padding: 16,
-  flexGrow: 1,
-  '&:last-child': {
-    paddingBottom: 16,
-  },
-});
+  const handleSearchChange = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+    onSearch(value); // Gọi hàm tìm kiếm từ parent
+  };
 
-const StyledTypography = styled(Typography)({
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 2,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
-
-export function Search() {
   return (
-    <FormControl sx={{ width: { xs: '100%', md: '25ch' } }} variant="outlined">
+    <FormControl sx={{ width: { xs: "100%", md: "25ch" } }} variant="outlined">
       <OutlinedInput
         size="small"
         id="search"
         placeholder="Search…"
+        value={searchTerm}
+        onChange={handleSearchChange}
         sx={{ flexGrow: 1 }}
         startAdornment={
-          <InputAdornment position="start" sx={{ color: 'text.primary' }}>
+          <InputAdornment position="start" sx={{ color: "text.primary" }}>
             <SearchRoundedIcon fontSize="small" />
           </InputAdornment>
         }
         inputProps={{
-          'aria-label': 'search',
+          "aria-label": "search",
         }}
       />
     </FormControl>
   );
 }
 
-export default function MainContent() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+export default function MainContent({ onTagSelect, onSearch }) {
+  const [selectedTag, setSelectedTag] = useState("All categories");
 
-  const handleClick = () => {
-    console.info('You clicked the filter chip.');
+  const handleTagClick = (tag) => {
+    setSelectedTag(tag);
+    onTagSelect(tag); // Truyền tag được chọn lên parent
   };
-
-  const handleCardClick = (id) => {
-    navigate(`/article/${id}`);
-  };
-
-  useEffect(() => {
-    setTimeout(() => {
-      const fetchArticlesData = async () => {
-        try {
-          setLoading(true);
-          const response = await fetchArticleApi();
-          setArticles(response.data);
-        } catch (error) {
-          setError(error.message || 'Không thể tải danh sách sách');
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchArticlesData();
-    }, 1500);
-  }, []);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <div>
         <Typography variant="h1" gutterBottom>
           ReadUp
         </Typography>
-        <Typography>Ứng dụng học tiếng anh tích hợp AI giúp mua sắm học Reading hiệu quả</Typography>
+        <Typography>
+          AI-integrated English learning application helps shopping and reading effectively
+        </Typography>
       </div>
       <Box
         sx={{
-          display: { xs: 'flex', sm: 'none' },
-          flexDirection: 'row',
+          display: { xs: "flex", sm: "none" },
+          flexDirection: "row",
           gap: 1,
-          width: { xs: '100%', md: 'fit-content' },
-          overflow: 'auto',
+          width: { xs: "100%", md: "fit-content" },
+          overflow: "auto",
         }}
       >
-        <Search />
+        <Search onSearch={onSearch} />
         <IconButton size="small" aria-label="RSS feed">
           <RssFeedRoundedIcon />
         </IconButton>
       </Box>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column-reverse', md: 'row' },
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: { xs: 'start', md: 'center' },
+          display: "flex",
+          flexDirection: { xs: "column-reverse", md: "row" },
+          width: "100%",
+          justifyContent: "space-between",
+          alignItems: { xs: "start", md: "center" },
           gap: 4,
-          overflow: 'auto',
+          overflow: "auto",
         }}
       >
         <Box
           sx={{
-            display: 'inline-flex',
-            flexDirection: 'row',
+            display: "inline-flex",
+            flexDirection: "row",
             gap: 3,
-            overflow: 'auto',
+            overflow: "auto",
           }}
         >
-          <Chip onClick={handleClick} size="medium" label="All categories" />
           <Chip
-            onClick={handleClick}
+            onClick={() => handleTagClick("All categories")}
             size="medium"
-            label="Company"
+            label="All categories"
             sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
+              border: selectedTag === "All categories" ? "1px solid" : "none",
+              backgroundColor: "transparent",
             }}
           />
           <Chip
-            onClick={handleClick}
+            onClick={() => handleTagClick("Family")}
             size="medium"
-            label="Product"
+            label="Family"
             sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
+              border: selectedTag === "Family" ? "1px solid" : "none",
+              backgroundColor: "transparent",
             }}
           />
           <Chip
-            onClick={handleClick}
+            onClick={() => handleTagClick("Travel")}
             size="medium"
-            label="Design"
+            label="Travel"
             sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
+              border: selectedTag === "Travel" ? "1px solid" : "none",
+              backgroundColor: "transparent",
             }}
           />
           <Chip
-            onClick={handleClick}
+            onClick={() => handleTagClick("Technology")}
             size="medium"
-            label="Engineering"
+            label="Technology"
             sx={{
-              backgroundColor: 'transparent',
-              border: 'none',
+              border: selectedTag === "Technology" ? "1px solid" : "none",
+              backgroundColor: "transparent",
+            }}
+          />
+          <Chip
+            onClick={() => handleTagClick("Food")}
+            size="medium"
+            label="Food"
+            sx={{
+              border: selectedTag === "Food" ? "1px solid" : "none",
+              backgroundColor: "transparent",
+            }}
+          />
+          <Chip
+            onClick={() => handleTagClick("Health")}
+            size="medium"
+            label="Health"
+            sx={{
+              border: selectedTag === "Health" ? "1px solid" : "none",
+              backgroundColor: "transparent",
+            }}
+          />
+          <Chip
+            onClick={() => handleTagClick("Flora and fauna")}
+            size="medium"
+            label="Flora and fauna"
+            sx={{
+              border: selectedTag === "Flora and fauna" ? "1px solid" : "none",
+              backgroundColor: "transparent",
             }}
           />
         </Box>
         <Box
           sx={{
-            display: { xs: 'none', sm: 'flex' },
-            flexDirection: 'row',
+            display: { xs: "none", sm: "flex" },
+            flexDirection: "row",
             gap: 1,
-            width: { xs: '100%', md: 'fit-content' },
-            overflow: 'auto',
+            width: { xs: "100%", md: "fit-content" },
+            overflow: "auto",
           }}
         >
-          <Search />
+          <Search onSearch={onSearch} />
           <IconButton size="small" aria-label="RSS feed">
             <RssFeedRoundedIcon />
           </IconButton>
         </Box>
       </Box>
-      <Grid container spacing={2} columns={12}>
-        {articles.map((article) => (
-          <Grid size={{ xs: 12, md: 3 }} key={article.id}>
-            <SyledCard
-              variant="outlined"
-              onClick={() => handleCardClick(article.id)}
-            >
-              <CardMedia
-                component="img"
-                alt="green iguana"
-                image={'https://picsum.photos/800/450?random=' + Math.floor(Math.random() * 10)}
-                sx={{
-                  aspectRatio: '16 / 9',
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
-                }}
-              />
-              <SyledCardContent>
-                <Typography gutterBottom variant="caption" component="div">
-                  tag
-                </Typography>
-                <Typography gutterBottom variant="h6" component="div">
-                  {article.title}
-                </Typography>
-                <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                  description
-                </StyledTypography>
-              </SyledCardContent>
-            </SyledCard>
-          </Grid>
-        ))}
-      </Grid>
     </Box>
   );
 }
