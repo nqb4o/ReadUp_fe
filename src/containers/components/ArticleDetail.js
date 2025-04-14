@@ -11,6 +11,7 @@ import {
 import { useParams } from "react-router-dom";
 import { getArticleByIdApi } from "../../services/ArticleService";
 import ChatBox from "./ChatBox";
+import TranslationPopper from './TranslationPopper';
 import axios from "axios";
 
 const BlogDetail = () => {
@@ -145,6 +146,7 @@ const BlogDetail = () => {
                 dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, "<p></p>") }}
             />
             <ChatBox />
+            <TranslationPopper />
         </Container>
     );
 };

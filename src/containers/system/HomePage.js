@@ -6,8 +6,6 @@ import AppAppBar from '../components/AppAppBar';
 import Footer from '../components/Footer';
 import { Outlet } from 'react-router-dom';
 import ScrollToTop from '../../utils/scrollToTop';
-import ChatBox from '../components/ChatBox';
-import TranslationPopper from '../components/TranslationPopper';
 
 export default function HomePage(props) {
   return (
@@ -21,8 +19,6 @@ export default function HomePage(props) {
       >
         <ScrollToTop />
         <Outlet />
-        <ChatBox />
-        <TranslationPopper />
       </Container>
       <Footer />
     </AppTheme>

@@ -5,8 +5,14 @@ const axiosInstance = axios.create({
     timeout: 5000,
 });
 
-const handleAddVocabulary = (user_id, word, article_id) => {
-    axiosInstance.post("/api/vocabulary/add", { user_id, word, article_id, })
+const getAuthHeader = () => ({
+    'Authorization': sessionStorage.getItem('authToken')
+});
+
+const handleAddVocabulary = (vocabData) => {
+    return axiosInstance.post("/api/vocabulary/add", vocabData, {
+        headers: getAuthHeader()
+    })
 }
 
 export {

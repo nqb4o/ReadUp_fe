@@ -22,7 +22,7 @@ const TranslationPopper = () => {
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const anchorRef = useRef(null);
 
-    // Call API để dịch văn bản
+    // Update the translateText function to fetch the meaning of the word
     const translateText = async (text) => {
         setIsLoading(true);
         setError(null);
@@ -51,39 +51,63 @@ const TranslationPopper = () => {
         }
     };
 
-    // Hàm xử lý khi bấm nút "Thêm từ vào từ điển"
+    // Update the handleAddToDictionary function to send the selected word to the backend
     const handleAddToDictionary = async () => {
+        const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+        const user_id = userData.id;
+
+        if (!user_id) {
+            setSnackbarMessage("Vui lòng đăng nhập để thêm từ vào thư viện");
+            setSnackbarOpen(true);
+            return;
+        }
+
+        const pathname = window.location.pathname;
+        const pathSegments = pathname.split('/');
+        const article_id = pathSegments[pathSegments.length - 1];
+
+        // Kiểm tra article_id có tồn tại hay không
+        if (!article_id) {
+            console.error("Invalid article ID from URL:", article_id);
+            setSnackbarMessage("Không thể xác định bài viết hiện tại. Vui lòng thử lại.");
+            setSnackbarOpen(true);
+            return;
+        }
+
         try {
-            // Gọi API để thêm từ vào từ điển
-            const response = await handleAddVocabulary(1, originalText, 0); // Replace with the actual user_id and article_id if available
+            const vocabData = {
+                user_id: user_id,
+                word: originalText,
+                article_id: article_id,
+            };
+
+            const response = await handleAddVocabulary(vocabData);
+
             if (response.status === 201) {
-                setSnackbarMessage(`Đã thêm "${originalText}" vào từ điển`);
+                setSnackbarMessage(`Đã thêm "${originalText}" vào thư viện`);
             } else {
-                setSnackbarMessage("Không thể thêm từ vào từ điển. Vui lòng thử lại.");
+                setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
             }
-            // Hiển thị thông báo thành công
+
             setSnackbarOpen(true);
         } catch (error) {
-            console.error("Error adding word to dictionary:", error);
-            setSnackbarMessage("Không thể thêm từ vào từ điển. Vui lòng thử lại.");
+            console.error("Error adding word to library:", error);
+            setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
             setSnackbarOpen(true);
         }
     };
 
-    // Xử lý khi bôi đen văn bản
-    const handleMouseUp = (event) => {
+    // Update the handleMouseUp function to trigger the translation API
+    const handleMouseUp = () => {
         const selection = window.getSelection();
         const selected = selection.toString().trim();
 
         if (selected) {
-            // Lưu lại văn bản gốc
             setOriginalText(selected);
 
-            // Lấy tọa độ của vùng bôi đen
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
 
-            // Cập nhật vị trí popper, tính toán với scroll
             setPopperPosition({
                 top: rect.top + window.scrollY - 40,
                 left: rect.right + window.scrollX + 10,
@@ -91,8 +115,7 @@ const TranslationPopper = () => {
 
             setOpenPopper(true);
 
-            // Gọi API để dịch
-            translateText(selected);
+            // translateText(selected);
         } else {
             setOpenPopper(false);
             setTranslatedText("");
@@ -193,6 +216,9 @@ const TranslationPopper = () => {
                                 </Typography>
                             ) : (
                                 <div>
+                                    <Typography variant="body2" color="white" mb={0.5}>
+                                        <strong>{originalText}</strong>
+                                    </Typography>
                                     <Typography variant="body1" fontWeight="medium" color="white" mb={1}>
                                         {translatedText}
                                     </Typography>
@@ -200,14 +226,14 @@ const TranslationPopper = () => {
                                         variant="outlined"
                                         size="small"
                                         onClick={handleAddToDictionary}
-                                        sx={{
-                                            color: "white",
-                                            borderColor: "white",
-                                            "&:hover": {
-                                                borderColor: "#ffffff",
-                                                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                                            },
-                                        }}
+                                    // sx={{
+                                    //     color: "white",
+                                    //     borderColor: "white",
+                                    //     "&:hover": {
+                                    //         borderColor: "#ffffff",
+                                    //         backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                    //     },
+                                    // }}
                                     >
                                         Thêm từ vào từ điển
                                     </Button>

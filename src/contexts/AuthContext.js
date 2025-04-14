@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
             } catch (error) {
                 console.error('Auth check failed:', error);
                 sessionStorage.removeItem('authToken');
+                sessionStorage.removeItem('user');
                 setUser(null);
                 setIsAuthenticated(false);
             }
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
             if (response.status === 200) {
                 setUser(response.data);
                 setIsAuthenticated(true);
+                sessionStorage.setItem('user', JSON.stringify(response.data));
             }
         } catch (error) {
             console.error('Login failed:', error);
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         sessionStorage.removeItem('authToken');
+        sessionStorage.removeItem('user');
         setUser(null);
         setIsAuthenticated(false);
     };
