@@ -10,6 +10,7 @@ import {
 import CommentIcon from "@mui/icons-material/Comment";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
+import axios from "axios";
 
 const ChatBox = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,22 +25,36 @@ const ChatBox = () => {
             text: "How can I help you today?",
         },
     ]);
+    const [loading, setLoading] = useState(false);
 
     const handleToggleChat = () => {
         setIsOpen(!isOpen);
     };
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (message.trim()) {
             setMessages([...messages, { sender: "user", text: message }]);
             setMessage("");
-            // Hardcoded response
-            setTimeout(() => {
+            setLoading(true);
+
+            try {
+                const response = await axios.post("http://localhost:5000/api/chatbot/query", {
+                    question: message,
+                });
+
                 setMessages((prev) => [
                     ...prev,
-                    { sender: "bot", text: "I'm here to help! What do you need?" },
+                    { sender: "bot", text: response.data.answer },
                 ]);
-            }, 1000);
+            } catch (error) {
+                console.error("Error querying chatbot:", error);
+                setMessages((prev) => [
+                    ...prev,
+                    { sender: "bot", text: "Sorry, I couldn't process your request." },
+                ]);
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -52,7 +67,6 @@ const ChatBox = () => {
                 zIndex: 1500,
             }}
         >
-            {/* Icon để mở/đóng chatbox */}
             <IconButton
                 onClick={handleToggleChat}
                 sx={{
@@ -67,7 +81,6 @@ const ChatBox = () => {
                 {isOpen ? <CloseIcon /> : <CommentIcon />}
             </IconButton>
 
-            {/* Chatbox */}
             {isOpen && (
                 <Paper
                     elevation={3}
@@ -83,7 +96,6 @@ const ChatBox = () => {
                         overflow: "hidden",
                     }}
                 >
-                    {/* Header của chatbox */}
                     <Box
                         sx={{
                             bgcolor: "#000",
@@ -102,7 +114,6 @@ const ChatBox = () => {
                         </Typography>
                     </Box>
 
-                    {/* Khu vực hiển thị tin nhắn */}
                     <Box
                         sx={{
                             flex: 1,
@@ -134,9 +145,29 @@ const ChatBox = () => {
                                 </Paper>
                             </Box>
                         ))}
+                        {loading && (
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-start",
+                                    mb: 1,
+                                }}
+                            >
+                                <Paper
+                                    sx={{
+                                        p: 1,
+                                        bgcolor: "white",
+                                        color: "text.primary",
+                                        borderRadius: 2,
+                                        maxWidth: "70%",
+                                    }}
+                                >
+                                    <Typography variant="body2">Typing...</Typography>
+                                </Paper>
+                            </Box>
+                        )}
                     </Box>
 
-                    {/* Ô nhập tin nhắn */}
                     <Box sx={{ p: 2, bgcolor: "white" }}>
                         <TextField
                             fullWidth

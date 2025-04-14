@@ -126,9 +126,6 @@ export default function Footer() {
               Flashcard
             </Link>
             <Link color="text.secondary" variant="body2" href="#">
-              Blog
-            </Link>
-            <Link color="text.secondary" variant="body2" href="#">
               Contact
             </Link>
           </Box>

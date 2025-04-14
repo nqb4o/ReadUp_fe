@@ -9,6 +9,8 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
+    useTheme,
+    alpha,
 } from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -25,19 +27,25 @@ const fadeIn = keyframes`
   }
 `;
 
-// Styled components
+// Styled components with theme awareness
 const FeatureSection = styled(Box)(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     padding: theme.spacing(5),
     borderRadius: theme.spacing(3),
-    background: "linear-gradient(145deg, #ffffff 0%, #f0f4f8 100%)",
-    border: "2px solid transparent",
-    boxShadow: "0 10px 40px rgba(0, 0, 0, 0.08)",
+    background: theme.palette.mode === 'light'
+        ? `linear-gradient(145deg, ${theme.palette.background.paper} 0%, ${alpha(theme.palette.primary.light, 0.1)} 100%)`
+        : `linear-gradient(145deg, ${theme.palette.background.paper} 0%, ${alpha(theme.palette.primary.dark, 0.15)} 100%)`,
+    border: `2px solid ${alpha(theme.palette.divider, 0.1)}`,
+    boxShadow: theme.palette.mode === 'light'
+        ? '0 10px 40px rgba(0, 0, 0, 0.08)'
+        : `0 10px 40px ${alpha(theme.palette.common.black, 0.2)}`,
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
     "&:hover": {
         transform: "translateY(-8px)",
-        boxShadow: "0 15px 50px rgba(0, 0, 0, 0.12)",
+        boxShadow: theme.palette.mode === 'light'
+            ? '0 15px 50px rgba(0, 0, 0, 0.12)'
+            : `0 15px 50px ${alpha(theme.palette.common.black, 0.25)}`,
     },
     marginBottom: theme.spacing(5),
     animation: `${fadeIn} 0.8s ease-out`,
@@ -56,15 +64,19 @@ const FeatureImage = styled(CardMedia)(({ theme }) => ({
     "&:hover": {
         transform: "scale(1.08)",
     },
-    boxShadow: "0 5px 20px rgba(0, 0, 0, 0.1)",
+    boxShadow: theme.palette.mode === 'light'
+        ? '0 5px 20px rgba(0, 0, 0, 0.1)'
+        : `0 5px 20px ${alpha(theme.palette.common.black, 0.2)}`,
 }));
 
 const HomePage = () => {
+    const theme = useTheme();
+
     return (
         <Box
             sx={{
                 minHeight: "100vh",
-                background: "#fff",
+                background: theme.palette.background.default,
                 position: "relative",
                 overflow: "hidden",
                 py: 10,
@@ -75,21 +87,24 @@ const HomePage = () => {
                     left: 0,
                     width: "100%",
                     height: "100%",
-                    background:
-                        "radial-gradient(circle at 20% 30%, rgba(66, 165, 245, 0.1) 0%, transparent 70%)",
+                    background: theme.palette.mode === 'light'
+                        ? `radial-gradient(circle at 20% 30%, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 70%)`
+                        : `radial-gradient(circle at 20% 30%, ${alpha(theme.palette.primary.dark, 0.15)} 0%, transparent 70%)`,
                     zIndex: 0,
                 },
             }}
         >
             <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
-                {/* Tiêu đề chính */}
+                {/* Main title */}
                 <Box sx={{ textAlign: "center", mb: 8 }}>
                     <Typography
                         variant="h2"
                         component="h1"
                         fontWeight="bold"
                         sx={{
-                            background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                            background: theme.palette.mode === 'light'
+                                ? `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.light})`
+                                : `linear-gradient(90deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
                             mb: 2,
@@ -117,14 +132,18 @@ const HomePage = () => {
                                 height="300"
                                 image="https://img.freepik.com/free-vector/flashcards-concept-illustration_114360-7623.jpg"
                                 alt="Flash Cards"
-                                sx={{ width: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    filter: theme.palette.mode === 'dark' ? 'brightness(0.9)' : 'none'
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={7}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
-                                sx={{ mb: 3, color: "primary.dark" }}
+                                sx={{ mb: 3, color: theme.palette.primary.main }}
                             >
                                 Improving Reading Skills by using Flash Cards
                             </Typography>
@@ -136,7 +155,7 @@ const HomePage = () => {
                                 ].map((text, index) => (
                                     <ListItem key={index} sx={{ py: 1.5 }}>
                                         <ListItemIcon>
-                                            <CheckCircleIcon sx={{ color: "success.main" }} />
+                                            <CheckCircleIcon color="success" />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={
@@ -161,14 +180,18 @@ const HomePage = () => {
                                 height="300"
                                 image="https://img.freepik.com/free-vector/vocabulary-concept-illustration_114360-7624.jpg"
                                 alt="Vocabulary"
-                                sx={{ width: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    filter: theme.palette.mode === 'dark' ? 'brightness(0.9)' : 'none'
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={7}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
-                                sx={{ mb: 3, color: "primary.dark" }}
+                                sx={{ mb: 3, color: theme.palette.primary.main }}
                             >
                                 Enhancing Reading Skills by extending your Vocabulary
                             </Typography>
@@ -177,7 +200,7 @@ const HomePage = () => {
                                     (text, index) => (
                                         <ListItem key={index} sx={{ py: 1.5 }}>
                                             <ListItemIcon>
-                                                <CheckCircleIcon sx={{ color: "success.main" }} />
+                                                <CheckCircleIcon color="success" />
                                             </ListItemIcon>
                                             <ListItemText
                                                 primary={
@@ -203,14 +226,18 @@ const HomePage = () => {
                                 height="300"
                                 image="https://img.freepik.com/free-vector/online-news-concept-illustration_114360-7625.jpg"
                                 alt="Real-World Articles"
-                                sx={{ width: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    filter: theme.palette.mode === 'dark' ? 'brightness(0.9)' : 'none'
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={7}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
-                                sx={{ mb: 3, color: "primary.dark" }}
+                                sx={{ mb: 3, color: theme.palette.primary.main }}
                             >
                                 Practice Reading with Real-World Articles
                             </Typography>
@@ -222,7 +249,7 @@ const HomePage = () => {
                                 ].map((text, index) => (
                                     <ListItem key={index} sx={{ py: 1.5 }}>
                                         <ListItemIcon>
-                                            <CheckCircleIcon sx={{ color: "success.main" }} />
+                                            <CheckCircleIcon color="success" />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={
@@ -247,14 +274,18 @@ const HomePage = () => {
                                 height="300"
                                 image="https://img.freepik.com/free-vector/podcast-concept-illustration_114360-7626.jpg"
                                 alt="Audio Integration"
-                                sx={{ width: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    filter: theme.palette.mode === 'dark' ? 'brightness(0.9)' : 'none'
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={7}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
-                                sx={{ mb: 3, color: "primary.dark" }}
+                                sx={{ mb: 3, color: theme.palette.primary.main }}
                             >
                                 Improve Listening Skills with Audio Integration
                             </Typography>
@@ -266,7 +297,7 @@ const HomePage = () => {
                                 ].map((text, index) => (
                                     <ListItem key={index} sx={{ py: 1.5 }}>
                                         <ListItemIcon>
-                                            <CheckCircleIcon sx={{ color: "success.main" }} />
+                                            <CheckCircleIcon color="success" />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={
@@ -291,14 +322,18 @@ const HomePage = () => {
                                 height="300"
                                 image="https://img.freepik.com/free-vector/ai-technology-concept-illustration_114360-7627.jpg"
                                 alt="AI Recommendations"
-                                sx={{ width: "100%", objectFit: "cover" }}
+                                sx={{
+                                    width: "100%",
+                                    objectFit: "cover",
+                                    filter: theme.palette.mode === 'dark' ? 'brightness(0.9)' : 'none'
+                                }}
                             />
                         </Grid>
                         <Grid item xs={12} md={7}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
-                                sx={{ mb: 3, color: "primary.dark" }}
+                                sx={{ mb: 3, color: theme.palette.primary.main }}
                             >
                                 Personalized Learning with AI Recommendations
                             </Typography>
@@ -310,7 +345,7 @@ const HomePage = () => {
                                 ].map((text, index) => (
                                     <ListItem key={index} sx={{ py: 1.5 }}>
                                         <ListItemIcon>
-                                            <CheckCircleIcon sx={{ color: "success.main" }} />
+                                            <CheckCircleIcon color="success" />
                                         </ListItemIcon>
                                         <ListItemText
                                             primary={

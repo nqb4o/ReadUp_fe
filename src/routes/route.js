@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { path } from "../utils/constant.js";
 import Login from "../containers/auth/Login.js";
@@ -7,38 +7,15 @@ import PrivateRoute from "./PrivateRoute.js";
 import HomePage from "../containers/system/HomePage.js";
 import EnterNewPassword from "../containers/auth/EnterNewPassword.js";
 import ProtectedRoute from "./ProtectedRoute.js";
-import AdminPage from "../containers/system/AdminPage.js";
-import ReadingPage from "../containers/system/ReadingPage.js";
+import AdminPage from "../containers/components/AdminPage.js";
 import UserManagement from "../containers/components/UserManagement.js";
 import ArticleManagement from "../containers/components/ArticleManagement.js";
 import Dashboard from "../containers/components/Dashboard.js";
-import MainContent from "../containers/components/MainContent.js";
-import Latest from "../containers/components/Latest.js";
 import Vocabulary from "../containers/components/Vocabulary.js";
 import FlashCard from "../containers/components/FlashCard.js";
-import Blog from "../containers/components/Blog.js";
-import BlogDetail from "../containers/components/BlogDetail.js";
+import ArticlePage from "../containers/system/ArticlePage.js";
+import ArticleDetail from "../containers/components/ArticleDetail.js";
 import Home from "../containers/components/Home.js";
-
-function Article() {
-    const [selectedTag, setSelectedTag] = useState("All categories");
-    const [searchTerm, setSearchTerm] = useState("");
-
-    const handleTagSelect = (tag) => {
-        setSelectedTag(tag);
-    };
-
-    const handleSearch = (term) => {
-        setSearchTerm(term);
-    };
-
-    return (
-        <>
-            <MainContent onTagSelect={handleTagSelect} onSearch={handleSearch} />
-            <Latest selectedTag={selectedTag} searchTerm={searchTerm} />
-        </>
-    );
-}
 
 const router = createBrowserRouter([
     {
@@ -51,7 +28,7 @@ const router = createBrowserRouter([
             },
             {
                 path: path.ARTICLE,
-                element: <Article />,
+                element: <ArticlePage />,
             },
             {
                 path: path.VOCABULARY,
@@ -62,12 +39,8 @@ const router = createBrowserRouter([
                 element: <FlashCard />,
             },
             {
-                path: path.BLOG,
-                element: <Blog />,
-            },
-            {
-                path: `${path.BLOG}/:id`,
-                element: <BlogDetail />,
+                path: `${path.ARTICLE}/:id`,
+                element: <ArticleDetail />,
                 loader: ({ params }) => {
                     console.log(params.id);
                     return { postId: params.id };
@@ -102,29 +75,25 @@ const router = createBrowserRouter([
     {
         path: path.ADMIN,
         element: (
-            // <PrivateRoute requireAdmin={true}>
-            <AdminPage />
-            // </PrivateRoute>
+            <PrivateRoute requireAdmin={true}>
+                <AdminPage />
+            </PrivateRoute>
         ),
         children: [
             {
-                path: "",
+                index: true,
                 element: <Dashboard />,
             },
             {
-                path: "user",
+                path: path.ADMIN_USER,
                 element: <UserManagement />,
             },
             {
-                path: "article",
+                path: path.ADMIN_ARTICLE,
                 element: <ArticleManagement />,
             },
         ],
-    },
-    {
-        path: path.ARTICLEDETAIL,
-        element: <ReadingPage />,
-    },
+    }
 ]);
 
 export default router;
