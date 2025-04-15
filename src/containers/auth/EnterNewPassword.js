@@ -94,7 +94,6 @@ function EnterNewPassword() {
             setSubmitSuccess(false); // Reset trạng thái thành công
 
             const response = await enterNewPasswordApi(password, token);
-            console.log(response)
             if (response.status === 200) {
                 setSubmitSuccess(true)
 

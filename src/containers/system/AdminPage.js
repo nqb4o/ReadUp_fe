@@ -1,50 +1,21 @@
-import React, { useState } from "react";
-import Box from "@mui/material/Box";
+import React from "react";
+import Container from "@mui/material/Container";
 import AppTheme from "../shared-theme/AppTheme";
-import SideBar from "../components/SideBar";
-import AdminHeader from "../components/AdminHeader";
-import { useMediaQuery, useTheme } from "@mui/material";
-import { Outlet } from "react-router-dom";
+import ArticleManagement from "../components/ArticleManagement";
+import AppAppBar from "../components/AppAppBar";
 
 function AdminPage(props) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
+  
   return (
     <AppTheme {...props}>
-      <Box sx={{ display: "flex" }}>
-        <SideBar
-          mobileOpen={mobileOpen}
-          handleDrawerToggle={handleDrawerToggle}
-          isMobile={isMobile}
-        />
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            width: {
-              xs: "100%",
-              sm: "100%",
-              md: `calc(100% - 250px)`,
-            },
-            minHeight: "100vh",
-            backgroundColor: "background.paper",
-          }}
-        >
-          <AdminHeader
-            isMobile={isMobile}
-            onDrawerToggle={handleDrawerToggle}
-          />
-          <Box sx={{ p: 3, mt: 8 }}>
-            <Outlet />
-          </Box>
-        </Box>
-      </Box>
+      <AppAppBar />
+      <Container
+        maxWidth="lg"
+        component="main"
+        sx={{ display: "flex", flexDirection: "column", my: 16, gap: 4 }}
+      >
+        <ArticleManagement />
+      </Container>
     </AppTheme>
   );
 }

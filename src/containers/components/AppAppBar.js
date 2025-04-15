@@ -118,14 +118,6 @@ export default function AppAppBar() {
               >
                 Flashcard
               </Button>
-              <Button
-                variant="text"
-                color="info"
-                size="small"
-                onClick={() => navigate("/blog")}
-              >
-                Blog
-              </Button>
             </Box>
           </Box>
           <Box
@@ -208,7 +200,6 @@ export default function AppAppBar() {
                 <MenuItem onClick={() => handleNavigate("/flashcard")}>
                   Flashcard
                 </MenuItem>
-                <MenuItem onClick={() => handleNavigate("/blog")}>Blog</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 {token ? (
                   <MenuItem>
