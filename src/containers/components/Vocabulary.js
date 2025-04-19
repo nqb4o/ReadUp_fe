@@ -103,7 +103,7 @@ const Vocabulary = () => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{pt: 16}}>
       {/* Thanh tìm kiếm */}
       <TextField
         fullWidth

@@ -92,7 +92,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={() => navigate("/")}
               >
-                Home
+                Trang chủ
               </Button>
               <Button
                 variant="text"
@@ -100,7 +100,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={() => navigate("/vocabulary")}
               >
-                Vocabulary
+                Từ vựng
               </Button>
               <Button
                 variant="text"
@@ -108,7 +108,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={() => navigate("/article")}
               >
-                Article
+                Bài báo
               </Button>
               <Button
                 variant="text"
@@ -116,7 +116,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={() => navigate("/flashcard")}
               >
-                Flashcard
+                Thẻ nhớ
               </Button>
             </Box>
           </Box>
@@ -134,7 +134,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={handleLogout}
               >
-                Log out
+                Đăng xuất
               </Button>
             ) : (
               <Button
@@ -143,7 +143,7 @@ export default function AppAppBar() {
                 size="small"
                 onClick={() => navigate("/login")}
               >
-                Log in
+                Đăng nhập
               </Button>
             )}
             <IconButton
@@ -190,15 +190,15 @@ export default function AppAppBar() {
                     <CloseRoundedIcon />
                   </IconButton>
                 </Box>
-                <MenuItem onClick={() => handleNavigate("/")}>Home</MenuItem>
+                <MenuItem onClick={() => handleNavigate("/")}>Trang chủ</MenuItem>
                 <MenuItem onClick={() => handleNavigate("/vocabulary")}>
-                  Vocabulary
+                  Từ vựng
                 </MenuItem>
                 <MenuItem onClick={() => handleNavigate("/article")}>
-                  Article
+                  Bài báo
                 </MenuItem>
                 <MenuItem onClick={() => handleNavigate("/flashcard")}>
-                  Flashcard
+                  Thẻ nhớ
                 </MenuItem>
                 <Divider sx={{ my: 3 }} />
                 {token ? (
@@ -209,7 +209,7 @@ export default function AppAppBar() {
                       fullWidth
                       onClick={handleLogout}
                     >
-                      Log out
+                      Đăng xuất
                     </Button>
                   </MenuItem>
                 ) : (
@@ -220,7 +220,7 @@ export default function AppAppBar() {
                       fullWidth
                       onClick={() => handleNavigate("/login")}
                     >
-                      Log in
+                      Đăng nhập
                     </Button>
                   </MenuItem>
                 )}

@@ -15,85 +15,98 @@ import Vocabulary from "../containers/components/Vocabulary.js";
 import FlashCard from "../containers/components/FlashCard.js";
 import ArticlePage from "../containers/system/ArticlePage.js";
 import ArticleDetail from "../containers/components/ArticleDetail.js";
-import Home from "../containers/components/Home.js";
+import PublicHomePage from "../containers/components/PublicHomePage.js";
+import UserHomePage from "../containers/components/UserHomePage.jsx";
+import { useAuth } from "../contexts/AuthContext.js";
+
+const RootRoute = () => {
+//   const { isAuthenticated, loading } = useAuth();
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+  return <UserHomePage /> 
+//   : <PublicHomePage />;
+};
 
 const router = createBrowserRouter([
-    {
-        path: path.HOME,
-        element: <HomePage />,
-        children: [
-            {
-                path: "",
-                element: <Home />,
-            },
-            {
-                path: path.ARTICLE,
-                element: <ArticlePage />,
-            },
-            {
-                path: path.VOCABULARY,
-                element: <Vocabulary />,
-            },
-            {
-                path: path.FLASHCARD,
-                element: <FlashCard />,
-            },
-            {
-                path: `${path.ARTICLE}/:id`,
-                element: <ArticleDetail />,
-                loader: ({ params }) => {
-                    console.log(params.id);
-                    return { postId: params.id };
-                },
-            },
-        ],
-    },
-    {
-        path: path.LOGIN,
-        element: (
-            <ProtectedRoute>
-                <Login />
-            </ProtectedRoute>
-        ),
-    },
-    {
-        path: path.REGISTER,
-        element: (
-            <ProtectedRoute>
-                <Register />
-            </ProtectedRoute>
-        ),
-    },
-    {
-        path: path.RESETPASSWORD,
-        element: (
-            <ProtectedRoute>
-                <EnterNewPassword />
-            </ProtectedRoute>
-        ),
-    },
-    {
-        path: path.ADMIN,
-        element: (
-            <PrivateRoute requireAdmin={true}>
-                <AdminPage />
-            </PrivateRoute>
-        ),
-        children: [
-            {
-                index: true,
-                element: <Dashboard />,
-            },
-            {
-                path: path.ADMIN_USER,
-                element: <UserManagement />,
-            },
-            {
-                path: path.ADMIN_ARTICLE,
-                element: <ArticleManagement />,
-            },
-        ],
-    }
+  {
+    path: path.HOME,
+    element: <HomePage />,
+    children: [
+      {
+        path: "",
+        element: <RootRoute />,
+      },
+      {
+        path: path.ARTICLE,
+        element: <ArticlePage />,
+      },
+      {
+        path: path.VOCABULARY,
+        element: <Vocabulary />,
+      },
+      {
+        path: path.FLASHCARD,
+        element: <FlashCard />,
+      },
+      {
+        path: `${path.ARTICLE}/:id`,
+        element: <ArticleDetail />,
+        loader: ({ params }) => {
+          console.log(params.id);
+          return { postId: params.id };
+        },
+      },
+    ],
+  },
+  {
+    path: path.LOGIN,
+    element: (
+      <ProtectedRoute>
+        <Login />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: path.REGISTER,
+    element: (
+      <ProtectedRoute>
+        <Register />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: path.RESETPASSWORD,
+    element: (
+      <ProtectedRoute>
+        <EnterNewPassword />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: path.ADMIN,
+    element: (
+        <AdminPage />
+      // <PrivateRoute requireAdmin={true}>
+      // </PrivateRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: path.ADMIN_USER,
+        element: <UserManagement />,
+      },
+      {
+        path: path.ADMIN_ARTICLE,
+        element: <ArticleManagement />,
+      },
+    ],
+  },
 ]);
 
 export default router;
