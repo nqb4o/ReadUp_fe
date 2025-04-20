@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box,
     Button,
@@ -16,10 +16,12 @@ import {
     MenuItem,
     TextField,
     TablePagination,
-    Avatar,
     InputAdornment,
     Typography,
     Modal,
+    CircularProgress,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import {
     Add,
@@ -28,52 +30,17 @@ import {
     MoreVert as MoreVertIcon,
     Search as SearchIcon,
 } from "@mui/icons-material";
+import {
+    getAllUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+} from "../../services/UserService";
 
 const UserManagement = () => {
-    const initialUsers = [
-        {
-            id: 1,
-            username: "adam_trantow",
-            email: "adam.trantow@example.com",
-            role: "UI Designer",
-            createdAt: "2023-01-15",
-            avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        {
-            id: 2,
-            username: "angel_rolfson",
-            email: "angel.rolfson@example.com",
-            role: "UI Designer",
-            createdAt: "2023-02-20",
-            avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        {
-            id: 3,
-            username: "betty_hammes",
-            email: "betty.hammes@example.com",
-            role: "UI Designer",
-            createdAt: "2023-03-10",
-            avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-        },
-        {
-            id: 4,
-            username: "billy_braun",
-            email: "billy.braun@example.com",
-            role: "UI Designer",
-            createdAt: "2023-04-05",
-            avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-        },
-        {
-            id: 5,
-            username: "billy_stoltenberg",
-            email: "billy.stoltenberg@example.com",
-            role: "Leader",
-            createdAt: "2023-05-12",
-            avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-        },
-    ];
-
-    const [users, setUsers] = useState(initialUsers);
+    const [users, setUsers] = useState([]);
+    const [isFetchingUsers, setIsFetchingUsers] = useState(false);
+    const [userFetchError, setUserFetchError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [order, setOrder] = useState("asc");
     const [selected, setSelected] = useState([]);
@@ -84,25 +51,58 @@ const UserManagement = () => {
     const [openModal, setOpenModal] = useState(false);
     const [modalMode, setModalMode] = useState("add");
     const [formData, setFormData] = useState({
-        username: "",
+        name: "",
         email: "",
-        role: "",
-        createdAt: "",
-        avatar: null,
     });
-    const [avatarPreview, setAvatarPreview] = useState(null);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success",
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Fetch users on component mount
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const fetchUsers = async () => {
+        setIsFetchingUsers(true);
+        try {
+            const response = await getAllUsers();
+            const fetchedUsers = response.data.map((user) => ({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            }));
+            setUsers(fetchedUsers);
+            setUserFetchError(null);
+        } catch (err) {
+            setUserFetchError("Không thể tải người dùng. Vui lòng thử lại sau.");
+            setUsers([]);
+            showSnackbar("Failed to fetch users", "error");
+        } finally {
+            setIsFetchingUsers(false);
+        }
+    };
+
+    const showSnackbar = (message, severity = "success") => {
+        setSnackbar({ open: true, message, severity });
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
+    };
 
     const filteredUsers = users.filter((user) =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSort = () => {
         const isAsc = order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         const sortedUsers = [...filteredUsers].sort((a, b) =>
-            isAsc
-                ? b.username.localeCompare(a.username)
-                : a.username.localeCompare(b.username)
+            isAsc ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
         );
         setUsers(sortedUsers);
     };
@@ -148,24 +148,22 @@ const UserManagement = () => {
     const handleOpenModal = (mode, user = null) => {
         setModalMode(mode);
         if (mode === "edit" && user) {
-            setFormData({ ...user });
-            setAvatarPreview(user.avatar);
+            setFormData({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            });
         } else {
             setFormData({
-                username: "",
+                name: "",
                 email: "",
-                role: "",
-                createdAt: "",
-                avatar: null,
             });
-            setAvatarPreview(null);
         }
         setOpenModal(true);
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
-        setAvatarPreview(null);
     };
 
     const handleFormChange = (e) => {
@@ -173,49 +171,60 @@ const UserManagement = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFormData((prev) => ({ ...prev, avatar: file }));
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setAvatarPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleSubmit = () => {
-        if (modalMode === "add") {
-            const newUser = {
-                ...formData,
-                id: users.length + 1,
-                avatar:
-                    avatarPreview ||
-                    formData.avatar ||
-                    "https://randomuser.me/api/portraits/lego/1.jpg",
-            };
-            setUsers([...users, newUser]);
-        } else if (modalMode === "edit") {
-            setUsers(
-                users.map((user) =>
-                    user.id === formData.id
-                        ? { ...formData, avatar: avatarPreview || formData.avatar }
-                        : user
-                )
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            if (modalMode === "add") {
+                const response = await createUser(formData);
+                const newUser = {
+                    id: response.data.id,
+                    name: response.data.name,
+                    email: response.data.email,
+                };
+                setUsers([...users, newUser]);
+                showSnackbar("User created successfully");
+            } else if (modalMode === "edit") {
+                await updateUser(formData.id, formData);
+                setUsers(
+                    users.map((user) =>
+                        user.id === formData.id ? { ...formData } : user
+                    )
+                );
+                showSnackbar("User updated successfully");
+            }
+            handleCloseModal();
+        } catch (err) {
+            showSnackbar(
+                `Failed to ${modalMode === "add" ? "create" : "update"} user`,
+                "error"
             );
+        } finally {
+            setIsSubmitting(false);
         }
-        handleCloseModal();
     };
 
-    const handleDelete = () => {
-        setUsers(users.filter((user) => user.id !== selectedUser.id));
-        handleMenuClose();
+    const handleDelete = async () => {
+        try {
+            await deleteUser(selectedUser.id);
+            setUsers(users.filter((user) => user.id !== selectedUser.id));
+            showSnackbar("User deleted successfully");
+        } catch (err) {
+            showSnackbar("Failed to delete user", "error");
+        } finally {
+            handleMenuClose();
+        }
     };
 
-    const handleDeleteSelected = () => {
-        setUsers(users.filter((user) => !selected.includes(user.id)));
-        setSelected([]);
+    const handleDeleteSelected = async () => {
+        try {
+            // Delete multiple users in parallel
+            await Promise.all(selected.map((id) => deleteUser(id)));
+            setUsers(users.filter((user) => !selected.includes(user.id)));
+            setSelected([]);
+            showSnackbar("Selected users deleted successfully");
+        } catch (err) {
+            showSnackbar("Failed to delete selected users", "error");
+        }
     };
 
     const handleChangePage = (event, newPage) => {
@@ -294,124 +303,137 @@ const UserManagement = () => {
                     sx={{ mb: 2 }}
                 />
 
-                <TableContainer
-                    component={Paper}
-                    sx={{
-                        boxShadow: "none",
-                        height: tableHeight,
-                        backgroundColor: "#fff",
-                        overflowX: "auto",
-                        overflowY: "auto",
-                        "&::-webkit-scrollbar": {
-                            width: "6px",
-                            height: "6px",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                            backgroundColor: "#f1f1f1",
-                            borderRadius: "4px",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                            backgroundColor: "#888",
-                            borderRadius: "4px",
-                            "&:hover": {
-                                backgroundColor: "#555",
+                {isFetchingUsers ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : userFetchError ? (
+                    <Typography color="error" textAlign="center" sx={{ my: 4 }}>
+                        {userFetchError}
+                    </Typography>
+                ) : users.length === 0 ? (
+                    <Typography textAlign="center" sx={{ my: 4, color: "#666" }}>
+                        Không có người dùng nào được tìm thấy.
+                    </Typography>
+                ) : (
+                    <TableContainer
+                        component={Paper}
+                        sx={{
+                            boxShadow: "none",
+                            height: tableHeight,
+                            backgroundColor: "#fff",
+                            overflowX: "auto",
+                            overflowY: "auto",
+                            "&::-webkit-scrollbar": {
+                                width: "6px",
+                                height: "6px",
                             },
-                        },
-                        scrollbarWidth: "thin",
-                        scrollbarColor: "#888 #f1f1f1",
-                        [(theme) => theme.breakpoints.down("sm")]: {
-                            height: "auto",
-                        },
-                    }}
-                >
-                    <Table stickyHeader sx={{ minWidth: 600 }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        indeterminate={
-                                            selected.length > 0 &&
-                                            selected.length < filteredUsers.length
-                                        }
-                                        checked={
-                                            filteredUsers.length > 0 &&
-                                            selected.length === filteredUsers.length
-                                        }
-                                        onChange={handleSelectAllClick}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <TableSortLabel active direction={order} onClick={handleSort}>
-                                        Username
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Role</TableCell>
-                                <TableCell>Created At</TableCell>
-                                <TableCell />
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredUsers
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((user) => (
-                                    <TableRow key={user.id} hover>
-                                        <TableCell padding="checkbox">
-                                            <Checkbox
-                                                checked={selected.indexOf(user.id) !== -1}
-                                                onChange={() => handleSelectClick(user.id)}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Box
-                                                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                                            >
-                                                <Avatar
-                                                    src={user.avatar}
-                                                    sx={{ width: 28, height: 28 }}
-                                                />
-                                                {user.username}
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.role}</TableCell>
-                                        <TableCell>{user.createdAt}</TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                onClick={(e) => handleMenuClick(e, user)}
-                                                sx={{ border: "unset", backgroundColor: "transparent" }}
-                                            >
-                                                <MoreVertIcon />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            {filteredUsers.length > 0 &&
-                                filteredUsers.slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                ).length < rowsPerPage &&
-                                Array.from(
-                                    {
-                                        length:
-                                            rowsPerPage -
-                                            filteredUsers.slice(
-                                                page * rowsPerPage,
-                                                page * rowsPerPage + rowsPerPage
-                                            ).length,
-                                    },
-                                    (_, index) => (
-                                        <TableRow
-                                            key={`empty-${index}`}
-                                            style={{ height: rowHeight }}
+                            "&::-webkit-scrollbar-track": {
+                                backgroundColor: "#f1f1f1",
+                                borderRadius: "4px",
+                            },
+                            "&::-webkit-scrollbar-thumb": {
+                                backgroundColor: "#888",
+                                borderRadius: "4px",
+                                "&:hover": {
+                                    backgroundColor: "#555",
+                                },
+                            },
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#888 #f1f1f1",
+                            [(theme) => theme.breakpoints.down("sm")]: {
+                                height: "auto",
+                            },
+                        }}
+                    >
+                        <Table stickyHeader sx={{ minWidth: 600 }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            indeterminate={
+                                                selected.length > 0 &&
+                                                selected.length < filteredUsers.length
+                                            }
+                                            checked={
+                                                filteredUsers.length > 0 &&
+                                                selected.length === filteredUsers.length
+                                            }
+                                            onChange={handleSelectAllClick}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TableSortLabel
+                                            active
+                                            direction={order}
+                                            onClick={handleSort}
                                         >
-                                            <TableCell colSpan={6} />
+                                            Username
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell />
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredUsers
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((user) => (
+                                        <TableRow key={user.id} hover>
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    checked={selected.indexOf(user.id) !== -1}
+                                                    onChange={() => handleSelectClick(user.id)}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box
+                                                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                                                >
+                                                    {user.name}
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    onClick={(e) => handleMenuClick(e, user)}
+                                                    sx={{
+                                                        border: "unset",
+                                                        backgroundColor: "transparent",
+                                                    }}
+                                                >
+                                                    <MoreVertIcon />
+                                                </IconButton>
+                                            </TableCell>
                                         </TableRow>
-                                    )
-                                )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                    ))}
+                                {filteredUsers.length > 0 &&
+                                    filteredUsers.slice(
+                                        page * rowsPerPage,
+                                        page * rowsPerPage + rowsPerPage
+                                    ).length < rowsPerPage &&
+                                    Array.from(
+                                        {
+                                            length:
+                                                rowsPerPage -
+                                                filteredUsers.slice(
+                                                    page * rowsPerPage,
+                                                    page * rowsPerPage + rowsPerPage
+                                                ).length,
+                                        },
+                                        (_, index) => (
+                                            <TableRow
+                                                key={`empty-${index}`}
+                                                style={{ height: rowHeight }}
+                                            >
+                                                <TableCell colSpan={6} />
+                                            </TableRow>
+                                        )
+                                    )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
             </Box>
 
             <TablePagination
@@ -465,8 +487,8 @@ const UserManagement = () => {
                     </Typography>
                     <TextField
                         label="Username"
-                        name="username"
-                        value={formData.username}
+                        name="name"
+                        value={formData.name}
                         onChange={handleFormChange}
                         fullWidth
                         margin="normal"
@@ -505,76 +527,6 @@ const UserManagement = () => {
                             "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
                         }}
                     />
-                    <TextField
-                        label="Role"
-                        name="role"
-                        value={formData.role}
-                        onChange={handleFormChange}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& fieldset": { borderColor: "grey.400" },
-                                "&:hover fieldset": { borderColor: "grey.600" },
-                                "&.Mui-focused fieldset": {
-                                    borderColor: "grey.400",
-                                    boxShadow: "none",
-                                },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                            "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
-                        }}
-                    />
-                    <TextField
-                        label="Created At"
-                        name="createdAt"
-                        type="date"
-                        value={formData.createdAt}
-                        onChange={handleFormChange}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        InputLabelProps={{ shrink: true }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                "& fieldset": { borderColor: "grey.400" },
-                                "&:hover fieldset": { borderColor: "grey.600" },
-                                "&.Mui-focused fieldset": {
-                                    borderColor: "grey.400",
-                                    boxShadow: "none",
-                                },
-                            },
-                            "& .MuiInputLabel-root": { color: "grey.600" },
-                            "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
-                        }}
-                    />
-                    <Box sx={{ mt: 2 }}>
-                        <Typography variant="body2" gutterBottom>
-                            Avatar
-                        </Typography>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: { xs: "column", sm: "row" },
-                                alignItems: { xs: "stretch", sm: "center" },
-                                gap: 2,
-                            }}
-                        >
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleAvatarChange}
-                                style={{ flex: 1 }}
-                            />
-                            {avatarPreview && (
-                                <Avatar
-                                    src={avatarPreview}
-                                    sx={{ width: 56, height: 56, alignSelf: "center" }}
-                                />
-                            )}
-                        </Box>
-                    </Box>
                     <Box
                         sx={{
                             display: "flex",
@@ -588,6 +540,7 @@ const UserManagement = () => {
                             variant="outlined"
                             onClick={handleCloseModal}
                             fullWidth={window.innerWidth < 600}
+                            disabled={isSubmitting}
                         >
                             Close
                         </Button>
@@ -595,12 +548,29 @@ const UserManagement = () => {
                             variant="contained"
                             onClick={handleSubmit}
                             fullWidth={window.innerWidth < 600}
+                            disabled={isSubmitting}
+                            startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
                         >
-                            {modalMode === "add" ? "Add" : "Edit"}
+                            {modalMode === "add" ? "Add" : "Save"}
                         </Button>
                     </Box>
                 </Box>
             </Modal>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

@@ -6,18 +6,31 @@ import {
     CardMedia,
     Divider,
     Chip,
-    Paper,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { getArticleByIdApi } from "../../services/ArticleService";
 import ChatBox from "./ChatBox";
 import TranslationPopper from './TranslationPopper';
 import axios from "axios";
+import ArticleSummary from "./ArticleSummary";
 
 const BlogDetail = () => {
     const { id } = useParams();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [summary, setSummary] = useState("");
+
+    const generateSummary = async (content, setSummary) => {
+        try {
+            const response = await axios.post("http://localhost:5000/api/chatbot/query", {
+                question: "What is this article's content?",
+            });
+            setSummary(response.data.answer);
+        } catch (error) {
+            console.error("Error generating summary:", error);
+            setSummary("Unable to generate summary.");
+        }
+    };
 
     useEffect(() => {
         const fetchArticle = async () => {
@@ -37,6 +50,12 @@ const BlogDetail = () => {
 
         fetchArticle();
     }, [id]);
+
+    useEffect(() => {
+        if (post) {
+            generateSummary(post.content, setSummary);
+        }
+    }, [post]);
 
     const initializeChatbotWithArticle = async (title, content) => {
         try {
@@ -109,30 +128,7 @@ const BlogDetail = () => {
                     sx={{ bgcolor: "primary.light", color: "primary.contrastText" }}
                 />
             </Box>
-            <Paper
-                elevation={0}
-                sx={{
-                    bgcolor: "primary.lightest" || "#f0f5ff",
-                    p: 3,
-                    mb: 4,
-                    borderRadius: 2,
-                    border: 1,
-                    borderColor: "primary.light",
-                }}
-            >
-                <Typography
-                    variant="h6"
-                    component="h2"
-                    fontWeight="bold"
-                    gutterBottom
-                    sx={{ color: "primary.dark" }}
-                >
-                    Summary
-                </Typography>
-                <Typography variant="body1" color="text.primary">
-                    {post.summary}
-                </Typography>
-            </Paper>
+            <ArticleSummary summary={summary} />
             <Divider sx={{ mb: 4 }} />
             <Typography
                 variant="body1"

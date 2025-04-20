@@ -15,7 +15,22 @@ import Vocabulary from "../containers/components/Vocabulary.js";
 import FlashCard from "../containers/components/FlashCard.js";
 import ArticlePage from "../containers/system/ArticlePage.js";
 import ArticleDetail from "../containers/components/ArticleDetail.js";
-import Home from "../containers/components/Home.js";
+import PublicHomePage from "../containers/components/PublicHomePage.js";
+import UserHomePage from "../containers/components/UserHomePage.js";
+import { useAuth } from "../contexts/AuthContext.js";
+
+const RootRoute = () => {
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (isAuthenticated) {
+        return <UserHomePage />;
+    }
+    else
+        return <PublicHomePage />
+};
 
 const router = createBrowserRouter([
     {
@@ -24,7 +39,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <Home />,
+                element: <RootRoute />,
             },
             {
                 path: path.ARTICLE,
@@ -75,9 +90,9 @@ const router = createBrowserRouter([
     {
         path: path.ADMIN,
         element: (
-            <PrivateRoute requireAdmin={true}>
-                <AdminPage />
-            </PrivateRoute>
+            <AdminPage />
+            // <PrivateRoute requireAdmin={true}>
+            // </PrivateRoute>
         ),
         children: [
             {
@@ -93,7 +108,7 @@ const router = createBrowserRouter([
                 element: <ArticleManagement />,
             },
         ],
-    }
+    },
 ]);
 
 export default router;

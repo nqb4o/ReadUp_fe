@@ -63,13 +63,15 @@ const TranslationPopper = () => {
         }
 
         const pathname = window.location.pathname;
-        const pathSegments = pathname.split('/');
+        const pathSegments = pathname.split("/");
         const article_id = pathSegments[pathSegments.length - 1];
 
         // Kiểm tra article_id có tồn tại hay không
         if (!article_id) {
             console.error("Invalid article ID from URL:", article_id);
-            setSnackbarMessage("Không thể xác định bài viết hiện tại. Vui lòng thử lại.");
+            setSnackbarMessage(
+                "Không thể xác định bài viết hiện tại. Vui lòng thử lại."
+            );
             setSnackbarOpen(true);
             return;
         }
@@ -126,7 +128,7 @@ const TranslationPopper = () => {
 
     // Đóng Snackbar
     const handleCloseSnackbar = (event, reason) => {
-        if (reason === 'clickaway') {
+        if (reason === "clickaway") {
             return;
         }
         setSnackbarOpen(false);
@@ -219,7 +221,12 @@ const TranslationPopper = () => {
                                     <Typography variant="body2" color="white" mb={0.5}>
                                         <strong>{originalText}</strong>
                                     </Typography>
-                                    <Typography variant="body1" fontWeight="medium" color="white" mb={1}>
+                                    <Typography
+                                        variant="body1"
+                                        fontWeight="medium"
+                                        color="white"
+                                        mb={1}
+                                    >
                                         {translatedText}
                                     </Typography>
                                     <Button
@@ -251,7 +258,11 @@ const TranslationPopper = () => {
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             >
-                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                >
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
