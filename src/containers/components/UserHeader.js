@@ -33,10 +33,10 @@ const mockSearchResults = [
 ];
 
 const placeholders = [
-  "Tìm kiếm bài kiểm tra thực hành",
+  "Tìm kiếm bài báo",
   "Tìm kiếm nhanh hơn bằng cách tìm kiếm",
-  "Bộ thẻ ghi nhớ, sách giáo khoa, câu hỏi",
-  "Tìm kiếm hướng dẫn học tập",
+  "Thẻ thẻ ghi nhớ, câu hỏi",
+  "Tìm kiếm thẻ ghi nhớ",
   "Tìm kiếm câu hỏi",
 ];
 

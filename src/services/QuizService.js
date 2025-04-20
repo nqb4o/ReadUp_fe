@@ -15,4 +15,16 @@ const getAllQuiz = () => {
   });
 };
 
-export { getAllQuiz };
+const getQuizRandom = () => {
+  return axiosInstance.get("/api/quiz/random", {
+    headers: getAuthHeader(),
+  });
+}
+
+const postQuizSubmit = (payload) => {
+  return axiosInstance.post("/api/quiz/submit", payload, {
+    headers: getAuthHeader(),
+  });
+};
+
+export { getAllQuiz, getQuizRandom, postQuizSubmit };

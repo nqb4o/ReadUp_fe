@@ -47,7 +47,7 @@ export default function MainContent({ onTagSelect, onSearch, selectedTag }) {
   ];
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 4, paddingTop: 16 }}>
       <div>
         <Typography variant="h1" gutterBottom>
           ReadUp

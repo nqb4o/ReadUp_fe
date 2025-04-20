@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Divider, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import FolderIcon from "@mui/icons-material/Folder";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
@@ -16,6 +16,7 @@ const SidebarContainer = styled(Box)(({ theme, collapsed }) => ({
   position: "fixed",
   top: 0,
   left: 0,
+  zIndex: 1000,
   paddingTop: theme.spacing(2),
   borderRight: `1px solid ${theme.palette.divider}`,
   transition: "width 0.3s ease",
@@ -53,6 +54,8 @@ const MenuButton = styled(Box)(({ theme, collapsed }) => ({
 
 const UserSideBar = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const toggleSidebar = () => {
     setCollapsed((prev) => !prev);
   };
@@ -61,8 +64,16 @@ const UserSideBar = ({ collapsed, setCollapsed }) => {
     { path: "/", icon: HomeIcon, label: "Trang chủ" },
     { path: "/library", icon: FolderIcon, label: "Thư viện của bạn" },
     { path: "/flashcards", icon: FlashOnIcon, label: "Thẻ ghi nhớ" },
-    { path: "/expert-solutions", icon: SchoolIcon, label: "Giải pháp chuyên gia" },
+    {
+      path: "/articles",
+      icon: SchoolIcon,
+      label: "Bài báo",
+    },
   ];
+
+  const handleItemClick = (path) => {
+    navigate(path);
+  };
 
   return (
     <SidebarContainer collapsed={collapsed}>
@@ -85,6 +96,7 @@ const UserSideBar = ({ collapsed, setCollapsed }) => {
             backgroundColor:
               location.pathname === item.path ? "#edefff" : "none",
           }}
+          onClick={() => handleItemClick(item.path)}
         >
           <item.icon
             sx={{
@@ -132,6 +144,7 @@ const UserSideBar = ({ collapsed, setCollapsed }) => {
             backgroundColor:
               location.pathname === item.path ? "#edefff" : "none",
           }}
+          onClick={() => handleItemClick(item.path)}
         >
           <item.icon
             sx={{

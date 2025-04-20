@@ -16,18 +16,22 @@ import FlashCard from "../containers/components/FlashCard.js";
 import ArticlePage from "../containers/system/ArticlePage.js";
 import ArticleDetail from "../containers/components/ArticleDetail.js";
 import PublicHomePage from "../containers/components/PublicHomePage.js";
-import UserHomePage from "../containers/components/UserHomePage.jsx";
+import UserHomePage from "../containers/components/UserHomePage.js";
 import { useAuth } from "../contexts/AuthContext.js";
+import UserFlashCard from "../containers/components/UserFlashCard.js";
+import UserArticlePage from "../containers/components/UserArticlePage.js";
+import UserArticleDetail from "../containers/components/UserArticleDetail.js";
+import UserQuestion from "../containers/components/UserQuestion.js";
+import FlashCardArticle from "../containers/components/FlashCardArticle.js";
 
 const RootRoute = () => {
-//   const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  return <UserHomePage /> 
-//   : <PublicHomePage />;
+  return isAuthenticated ? <UserHomePage /> : <PublicHomePage />;
 };
 
 const router = createBrowserRouter([
@@ -52,12 +56,32 @@ const router = createBrowserRouter([
         element: <FlashCard />,
       },
       {
+        path: path.USERFLASHCARD,
+        element: <UserFlashCard />,
+      },
+      {
+        path: path.USERARTICLE,
+        element: <UserArticlePage />,
+      },
+      {
         path: `${path.ARTICLE}/:id`,
         element: <ArticleDetail />,
         loader: ({ params }) => {
           console.log(params.id);
           return { postId: params.id };
         },
+      },
+      {
+        path: `${path.USERARTICLE}/:id`,
+        element: <UserArticleDetail />,
+      },
+      {
+        path: `${path.USERFLASHCARD}/:id`,
+        element: <FlashCardArticle />,
+      },
+      {
+        path: `${path.QUESTION}?/:id`,
+        element: <UserQuestion />,
       },
     ],
   },
@@ -88,9 +112,9 @@ const router = createBrowserRouter([
   {
     path: path.ADMIN,
     element: (
+      <PrivateRoute requireAdmin={true}>
         <AdminPage />
-      // <PrivateRoute requireAdmin={true}>
-      // </PrivateRoute>
+      </PrivateRoute>
     ),
     children: [
       {

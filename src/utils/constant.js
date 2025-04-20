@@ -10,5 +10,8 @@ export const path = {
     PAYMENT: "/payment",
     VOCABULARY: "/vocabulary",
     FLASHCARD: "/flashcard",
+    USERFLASHCARD: "/flashcards",
     ARTICLE: "/article",
+    USERARTICLE: "/articles",
+    QUESTION: "/questions",
 };

@@ -25,4 +25,10 @@ const handleGetVocabularyById = (id) => {
   });
 };
 
-export { handleAddVocabulary, handleGetVocabulary, handleGetVocabularyById };
+const handleGetVocabularyByArticleId = (articleId) => {
+  return axiosInstance.get(`/api/vocabulary/${articleId}`, {
+    headers: getAuthHeader(),
+  });
+};
+
+export { handleAddVocabulary, handleGetVocabulary, handleGetVocabularyById, handleGetVocabularyByArticleId };
