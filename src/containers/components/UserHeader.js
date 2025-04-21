@@ -22,6 +22,8 @@ import PolicyIcon from "@mui/icons-material/Policy";
 import HelpIcon from "@mui/icons-material/Help";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+
 
 const mockSearchResults = [
     "algebra 2",
@@ -33,14 +35,15 @@ const mockSearchResults = [
 ];
 
 const placeholders = [
-    "Tìm kiếm bài kiểm tra thực hành",
+    "Tìm kiếm bài báo",
     "Tìm kiếm nhanh hơn bằng cách tìm kiếm",
-    "Bộ thẻ ghi nhớ, sách giáo khoa, câu hỏi",
-    "Tìm kiếm hướng dẫn học tập",
+    "Thẻ thẻ ghi nhớ, câu hỏi",
+    "Tìm kiếm thẻ ghi nhớ",
     "Tìm kiếm câu hỏi",
 ];
 
 const UserHeader = () => {
+    const { logout } = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const [searchAnchorEl, setSearchAnchorEl] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
@@ -61,7 +64,9 @@ const UserHeader = () => {
     };
 
     const handleLogout = () => {
+        logout();
         navigate("/");
+        setAnchorEl(null);
     };
 
     const handleSearchChange = (event) => {
@@ -100,6 +105,11 @@ const UserHeader = () => {
     const handleClickAway = () => {
         handleSearchClose();
     };
+
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+
+    const user_email = user?.email || "Unknown Email";
+    const user_name = user?.name || "Unknown Name";
 
     return (
         <Box
@@ -270,7 +280,7 @@ const UserHeader = () => {
                                     fontSize: { xs: "0.9rem", sm: "1rem" },
                                 }}
                             >
-                                user
+                                {user_name}
                             </Box>
                             <Box
                                 sx={{
@@ -278,36 +288,36 @@ const UserHeader = () => {
                                     color: "text.secondary",
                                 }}
                             >
-                                user@gmail.com
+                                {user_email}
                             </Box>
                         </Box>
                     </Box>
                     <Box sx={{ borderBottom: "1px solid #e0e0e0", my: 1 }} />
                     <MenuItem>
                         <EmojiEventsIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Achievements
+                        Thành tựu
                     </MenuItem>
                     <MenuItem>
                         <SettingsIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Settings
+                        Cài Đặt
                     </MenuItem>
                     <Box sx={{ borderBottom: "1px solid #e0e0e0", my: 1 }} />
                     <MenuItem onClick={handleLogout}>
                         <LogoutIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Log out
+                        Đăng Xuất
                     </MenuItem>
                     <Box sx={{ borderBottom: "1px solid #e0e0e0", my: 1 }} />
                     <MenuItem>
                         <PolicyIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Privacy policy
+                        Chính sách bảo mật
                     </MenuItem>
                     <MenuItem>
                         <HelpIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Help and feedback
+                        Trợ giúp và phản hồi
                     </MenuItem>
                     <MenuItem>
                         <UpgradeIcon sx={{ mr: 1, color: "text.secondary" }} />
-                        Upgrade
+                        Nâng cấp tài khoản
                     </MenuItem>
                 </Menu>
             </Box>

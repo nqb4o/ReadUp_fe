@@ -53,6 +53,11 @@ const TranslationPopper = () => {
 
     // Update the handleAddToDictionary function to send the selected word to the backend
     const handleAddToDictionary = async () => {
+        if (!originalText) {
+            setSnackbarMessage("Không có từ nào để thêm vào từ điển.");
+            setSnackbarOpen(true);
+            return;
+        }
         const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
         const user_id = userData.id;
 
@@ -99,6 +104,12 @@ const TranslationPopper = () => {
         }
     };
 
+    useEffect(() => {
+        if (originalText) {
+            translateText(originalText);
+        }
+    }, [originalText]);
+
     // Update the handleMouseUp function to trigger the translation API
     const handleMouseUp = () => {
         const selection = window.getSelection();
@@ -106,7 +117,6 @@ const TranslationPopper = () => {
 
         if (selected) {
             setOriginalText(selected);
-
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
 
@@ -116,8 +126,7 @@ const TranslationPopper = () => {
             });
 
             setOpenPopper(true);
-
-            // translateText(selected);
+            // Không gọi translateText(selected) tại đây
         } else {
             setOpenPopper(false);
             setTranslatedText("");

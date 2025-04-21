@@ -9,17 +9,13 @@ import {
   Toolbar,
   Button,
   IconButton,
-  Badge,
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import ColorModeIconDropdown from "../shared-theme/ColorModeIconDropdown";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../../contexts/CartContext";
-import FavoritesDrawer from "./FavoritesDrawer";
 import logo from "../../assets/icons/logo_ReadUp.svg";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -42,9 +38,6 @@ export default function AppAppBar() {
   const { logout } = useAuth();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-  const { cartItemCount, favoritesCount } = useCart();
-  const [cartOpen, setCartOpen] = useState(false);
-  const [favoritesOpen, setFavoritesOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -106,7 +99,7 @@ export default function AppAppBar() {
                 variant="text"
                 color="info"
                 size="small"
-                onClick={() => navigate("/article")}
+                onClick={() => navigate("/articles")}
               >
                 Bài báo
               </Button>
@@ -146,25 +139,9 @@ export default function AppAppBar() {
                 Đăng nhập
               </Button>
             )}
-            <IconButton
-              aria-label="Favorites"
-              onClick={() => setFavoritesOpen(true)}
-            >
-              <Badge badgeContent={favoritesCount} color="primary" title="Favorites">
-                <FavoriteIcon />
-              </Badge>
-            </IconButton>
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-            <IconButton
-              aria-label="Favorites"
-              onClick={() => setFavoritesOpen(true)}
-            >
-              <Badge badgeContent={favoritesCount} color="primary" title="Favorites">
-                <FavoriteIcon />
-              </Badge>
-            </IconButton>
             <ColorModeIconDropdown size="medium" />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
               <MenuIcon />
@@ -194,7 +171,7 @@ export default function AppAppBar() {
                 <MenuItem onClick={() => handleNavigate("/vocabulary")}>
                   Từ vựng
                 </MenuItem>
-                <MenuItem onClick={() => handleNavigate("/article")}>
+                <MenuItem onClick={() => handleNavigate("/articles")}>
                   Bài báo
                 </MenuItem>
                 <MenuItem onClick={() => handleNavigate("/flashcard")}>
@@ -229,10 +206,6 @@ export default function AppAppBar() {
           </Box>
         </StyledToolbar>
       </Container>
-      <FavoritesDrawer
-        open={favoritesOpen}
-        onClose={() => setFavoritesOpen(false)}
-      />
     </AppBar>
   );
 }

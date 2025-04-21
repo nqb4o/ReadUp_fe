@@ -15,8 +15,9 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { fetchArticleApi } from "../../services/ArticleService";
-import { handleGetVocabularyById } from "../../services/VocabularyServices";
-import { getAllQuiz } from "../../services/QuizService"; // Adjust path as needed
+import { handleGetVocabularyByUserId } from "../../services/VocabularyServices";
+import { getQuizQuestionApi } from "../../services/QuizService"; // Adjust path as needed
+import { useNavigate } from 'react-router-dom'; // Correctly import useNavigate
 
 // Styled FlashcardSetCard with flip animation and hover after effect
 const FlashcardSetCard = styled(Card)(({ theme, isQuestionCard }) => ({
@@ -213,6 +214,7 @@ const UserHomePage = () => {
     const [loadingTranslations, setLoadingTranslations] = useState({});
     const [translationErrors, setTranslationErrors] = useState({});
     const [flippedCards, setFlippedCards] = useState({});
+    const navigate = useNavigate(); // Directly assign the navigation function
 
     // Update flashcardsPerPage based on screen size
     const updateFlashcardsPerPage = () => {
@@ -257,10 +259,12 @@ const UserHomePage = () => {
     useEffect(() => {
         const fetchFlashcards = async () => {
             setIsFetchingFlashcards(true);
+            const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+            const user_id = userData.id;
             try {
-                const response = await handleGetVocabularyById("user-specific-id");
+                const response = await handleGetVocabularyByUserId(user_id);
                 setFlashcardData(
-                    response.data.map((item) => ({
+                    response.data.data.map((item) => ({
                         id: item.id,
                         word: item.word,
                     }))
@@ -303,10 +307,17 @@ const UserHomePage = () => {
         const fetchQuizzes = async () => {
             setIsFetchingQuizzes(true);
             try {
-                const response = await getAllQuiz();
-                setQuizData(response.data);
+                const response = await getQuizQuestionApi();
+                console.log("Quizzes response:", response.data); // Debugging line
+                if (response.data.questions) {
+                    setQuizData(response.data.questions);
+                } else {
+                    console.error("Unexpected response format for quizzes:", response.data);
+                    setQuizData([]);
+                }
                 setQuizFetchError(null);
             } catch (err) {
+                console.error("Error fetching quizzes:", err);
                 setQuizFetchError("Không thể tải câu hỏi. Vui lòng thử lại sau.");
                 setQuizData([]);
             } finally {
@@ -480,11 +491,15 @@ const UserHomePage = () => {
                                 sm={isMobileOrTablet ? 12 : 6}
                                 key={article.id}
                             >
-                                <ArticleCard>
+                                <ArticleCard onClick={() => navigate(`/articles/${article.id}`)} sx={{ cursor: 'pointer' }}>
                                     <StyledCardMedia
                                         component="img"
-                                        image={article.image}
-                                        alt={article.title}
+                                        image={article.image_url || "https://via.placeholder.com/400"}
+                                        alt={article.title || "Default Image"}
+                                        sx={{
+                                            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                                            objectFit: "cover",
+                                        }}
                                     />
                                     <CardContent sx={{ flex: 1, py: 2, px: { xs: 1, sm: 2 } }}>
                                         <Typography
@@ -674,35 +689,13 @@ const UserHomePage = () => {
                 <QuestionsContainer>
                     <Grid container spacing={{ xs: 2, sm: 3 }}>
                         {currentQuestions.map((question) => {
+                            // Tạo mảng đáp án và trộn ngẫu nhiên
                             const options = shuffleArray([
-                                { label: "A.", value: question.correct_meaning },
+                                { label: "A.", value: question.correct_answer },
                                 { label: "B.", value: question.wrong1 },
                                 { label: "C.", value: question.wrong2 },
                                 { label: "D.", value: question.wrong3 },
                             ]);
-
-                            const orderedOptions = [];
-                            for (let i = 0; i < options.length; i++) {
-                                if (options[i].label === "A." || options[i].label === "B.") {
-                                    if (
-                                        !orderedOptions[0] ||
-                                        orderedOptions[0].label > options[i].label
-                                    ) {
-                                        orderedOptions.unshift(options[i]);
-                                    } else {
-                                        orderedOptions.splice(1, 0, options[i]);
-                                    }
-                                } else {
-                                    if (
-                                        !orderedOptions[2] ||
-                                        orderedOptions[2].label > options[i].label
-                                    ) {
-                                        orderedOptions.splice(2, 0, options[i]);
-                                    } else {
-                                        orderedOptions.push(options[i]);
-                                    }
-                                }
-                            }
 
                             return (
                                 <Grid
@@ -722,61 +715,30 @@ const UserHomePage = () => {
                                                 fontWeight: "bold",
                                             }}
                                         >
-                                            {question.word}
+                                            {question.question}
                                         </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                mb: 2,
-                                                color: "#333",
-                                                lineHeight: 1.5,
-                                            }}
-                                        >
-                                            What is the meaning of the word above? (Từ trên có nghĩa là
-                                            gì?)
-                                        </Typography>
-                                        <Box sx={{ flexGrow: 1 }}>
+                                        <Box sx={{ flexGrow: 1, mt: 2 }}>
                                             <Box sx={{ display: "flex", mb: 1 }}>
                                                 <Box sx={{ flex: 1 }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#333",
-                                                        }}
-                                                    >
-                                                        {orderedOptions[0].label} {orderedOptions[0].value}
+                                                    <Typography variant="body2" sx={{ color: "#333" }}>
+                                                        {options[0].label} {options[0].value}
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ flex: 1 }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#333",
-                                                        }}
-                                                    >
-                                                        {orderedOptions[1].label} {orderedOptions[1].value}
+                                                    <Typography variant="body2" sx={{ color: "#333" }}>
+                                                        {options[1].label} {options[1].value}
                                                     </Typography>
                                                 </Box>
                                             </Box>
                                             <Box sx={{ display: "flex" }}>
                                                 <Box sx={{ flex: 1 }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#333",
-                                                        }}
-                                                    >
-                                                        {orderedOptions[2].label} {orderedOptions[2].value}
+                                                    <Typography variant="body2" sx={{ color: "#333" }}>
+                                                        {options[2].label} {options[2].value}
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ flex: 1 }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#333",
-                                                        }}
-                                                    >
-                                                        {orderedOptions[3].label} {orderedOptions[3].value}
+                                                    <Typography variant="body2" sx={{ color: "#333" }}>
+                                                        {options[3].label} {options[3].value}
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -806,7 +768,7 @@ const UserHomePage = () => {
                     )}
                 </QuestionsContainer>
             )}
-        </Box>
+        </Box >
     );
 };
 

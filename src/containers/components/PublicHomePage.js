@@ -9,7 +9,14 @@ import {
     IconButton,
     useTheme,
     alpha,
-} from "@mui/material";
+    Paper,
+    Chip,
+    Pagination,
+    Alert,
+    AlertTitle,
+    CircularProgress
+}
+    from "@mui/material";
 import { styled, keyframes } from "@mui/system";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -258,7 +265,7 @@ const PublicHomePage = () => {
                         color="primary"
                         size="large"
                         sx={{ borderRadius: "50px", textTransform: "none", px: 4 }}
-                        onClick={() => handleLogout("/login")}
+                        onClick={() => navigate("/register")}
                     >
                         Đăng ký miễn phí
                     </Button>
@@ -428,6 +435,7 @@ const PublicHomePage = () => {
                             </Typography>
                             <Button
                                 variant="text"
+                                onClick={() => navigate("/register")}
                                 sx={{
                                     color: "#fff",
                                     fontWeight: "bold",
@@ -472,11 +480,12 @@ const PublicHomePage = () => {
                                 sx={{ py: 6 }}
                             >
                                 Ghi nhớ mọi thứ với các bài kiểm tra thực hành được cá nhân hóa
-                                và các buổi học trong Learn. 98% học sinh cho biết Quizlet đã
+                                và các buổi học trong Learn. 98% học sinh cho biết ReadUp đã
                                 cải thiện khả năng hiểu của họ.
                             </Typography>
                             <Button
                                 variant="text"
+                                onClick={() => navigate("/register")}
                                 sx={{
                                     color: "#fff",
                                     fontWeight: "bold",
@@ -506,125 +515,188 @@ const PublicHomePage = () => {
                     </Grid>
                 </FeatureSection>
 
-                Popular Articles
-                <Box sx={{ textAlign: "center", mb: 6, px: 2 }}>
-                    <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+                <Box sx={{ textAlign: "center", mb: 8, px: { xs: 2, md: 4 } }}>
+                    <Typography
+                        variant="h4"
+                        fontWeight="700"
+                        sx={{
+                            mb: 4,
+                            position: "relative",
+                            display: "inline-block",
+                            "&:after": {
+                                content: '""',
+                                position: "absolute",
+                                bottom: -10,
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                width: "60px",
+                                height: "4px",
+                                backgroundColor: "primary.main",
+                                borderRadius: "2px"
+                            }
+                        }}
+                    >
                         Các bài báo phổ biến
                     </Typography>
+
                     {loading ? (
-                        <Typography variant="body1" color="text.secondary">
-                            Đang tải bài báo...
-                        </Typography>
+                        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+                            <CircularProgress size={40} />
+                        </Box>
                     ) : error ? (
-                        <Typography variant="body1" color="error">
+                        <Alert severity="error" sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
+                            <AlertTitle>Lỗi</AlertTitle>
                             {error}
-                        </Typography>
+                        </Alert>
                     ) : articles.length === 0 ? (
-                        <Typography variant="body1" color="text.secondary">
+                        <Alert severity="info" sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
+                            <AlertTitle>Thông báo</AlertTitle>
                             Không có bài báo nào để hiển thị.
-                        </Typography>
+                        </Alert>
                     ) : (
                         <>
                             <Grid
                                 container
-                                spacing={2}
+                                spacing={3}
                                 justifyContent="center"
-                                sx={{ px: 6 }}
+                                sx={{ px: { xs: 2, md: 6 }, mt: 2 }}
                             >
-                                {visibleArticles.map((article, index) => (
+                                {visibleArticles.map((article) => (
                                     <Grid item xs={12} sm={6} md={4} key={article.id}>
-                                        <Box
+                                        <Paper
+                                            elevation={0}
                                             sx={{
-                                                p: 2,
-                                                borderRadius: 2,
-                                                backgroundColor: "background.paper",
-                                                boxShadow: 1,
-                                                transition: "box-shadow 0.3s ease, transform 0.3s ease",
+                                                borderRadius: 3,
+                                                overflow: "hidden",
+                                                height: "100%",
+                                                transition: "all 0.3s ease",
+                                                border: "1px solid",
+                                                borderColor: "divider",
                                                 "&:hover": {
-                                                    boxShadow: 3,
-                                                    transform: "translateY(-5px)",
+                                                    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+                                                    transform: "translateY(-6px)",
                                                 },
-                                                display: "flex",
-                                                justifyContent: "center",
-                                                flexDirection: "column",
-                                                gap: 6,
-                                                minHeight: "200px",
                                             }}
                                         >
                                             <Box
                                                 sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "space-between",
-                                                    gap: 2,
-                                                    maxWidth: "300px",
+                                                    height: 180,
+                                                    backgroundImage: `url(${article.image_url})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    position: "relative",
                                                 }}
                                             >
-                                                <Box sx={{ textAlign: "left", maxHeight: "4.75rem" }}>
-                                                    <Typography
-                                                        component="div"
-                                                        fontWeight="bold"
-                                                        sx={{ mb: 2 }}
-                                                    >
-                                                        {article.title}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
-                                                        sx={{
-                                                            border: "1px #ccc",
-                                                            borderRadius: 4,
-                                                            py: 0.2,
-                                                            px: 0.5,
-                                                            fontSize: ".75rem",
-                                                            width: "fit-content",
-                                                            backgroundColor: "#edefff",
-                                                        }}
-                                                    >
-                                                        {/* {article.tags.join(", ")} */}
-                                                    </Typography>
-                                                </Box>
+                                                {/* Thêm gradient overlay để nổi bật văn bản */}
                                                 <Box
                                                     sx={{
-                                                        height: "64px",
-                                                        width: "64px",
-                                                        backgroundImage: `url(${article.image})`,
-                                                        backgroundSize: "cover",
-                                                        backgroundPosition: "center",
-                                                        borderRadius: 1,
+                                                        position: "absolute",
+                                                        bottom: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        p: 2,
+                                                        background: "linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0))",
                                                     }}
-                                                />
+                                                >
+                                                    {article.tags && article.tags.length > 0 && (
+                                                        <Chip
+                                                            label={article.tags[0]}
+                                                            size="small"
+                                                            sx={{
+                                                                backgroundColor: "primary.main",
+                                                                color: "white",
+                                                                fontWeight: 500,
+                                                                mb: 1,
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
                                             </Box>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {article.content}
-                                            </Typography>
-                                        </Box>
+
+                                            <Box sx={{ p: 3 }}>
+                                                <Typography
+                                                    variant="h6"
+                                                    fontWeight="600"
+                                                    sx={{
+                                                        mb: 2,
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: "vertical",
+                                                        lineHeight: 1.4,
+                                                        height: "2.8em",
+                                                    }}
+                                                >
+                                                    {article.title}
+                                                </Typography>
+
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: 3,
+                                                        WebkitBoxOrient: "vertical",
+                                                        mb: 2,
+                                                        height: "4.5em",
+                                                    }}
+                                                >
+                                                    {article.content}
+                                                </Typography>
+
+                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
+                                                    <Button
+                                                        variant="text"
+                                                        endIcon={<ArrowForwardIosIcon fontSize="small" />}
+                                                        sx={{ fontWeight: 500, p: 0 }}
+                                                        onClick={() => navigate(`/articles/${article.id}`)}
+                                                    >
+                                                        Đọc thêm
+                                                    </Button>
+
+                                                    {article.date && (
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            {new Date(article.date).toLocaleDateString('vi-VN')}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                            </Box>
+                                        </Paper>
                                     </Grid>
                                 ))}
                             </Grid>
+
                             <Box
                                 sx={{
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    mt: 3,
+                                    mt: 5,
+                                    mb: 2,
                                 }}
                             >
-                                <IconButton
-                                    onClick={handlePrevPage}
-                                    sx={{ mx: 20, borderRadius: 20 }}
-                                >
-                                    <ArrowBackIosIcon />
-                                </IconButton>
-                                <Typography variant="body1">
-                                    {currentPage}/{totalPages}
-                                </Typography>
-                                <IconButton
-                                    onClick={handleNextPage}
-                                    sx={{ mx: 20, borderRadius: 20 }}
-                                >
-                                    <ArrowForwardIosIcon />
-                                </IconButton>
+                                <Pagination
+                                    count={totalPages}
+                                    page={currentPage}
+                                    onChange={(e, page) => {
+                                        if (page < currentPage) {
+                                            handlePrevPage();
+                                        } else if (page > currentPage) {
+                                            handleNextPage();
+                                        }
+                                    }}
+                                    variant="outlined"
+                                    shape="rounded"
+                                    size="large"
+                                    sx={{
+                                        '& .MuiPaginationItem-root': {
+                                            mx: 0.5
+                                        }
+                                    }}
+                                />
                             </Box>
                         </>
                     )}

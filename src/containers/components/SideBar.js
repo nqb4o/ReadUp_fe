@@ -17,6 +17,9 @@ import {
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
+import QuizIcon from '@mui/icons-material/Quiz';
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = {
     xs: "100%",
@@ -24,19 +27,26 @@ const drawerWidth = {
     md: "250px",
 };
 
-const menuItems = [
-    {
-        text: "Dashboard",
-        icon: <DashboardSharp />,
-        path: "/admin",
-    },
-    { text: "User", icon: <Portrait />, path: "/admin/user" },
-    { text: "Article", icon: <Assignment />, path: "/admin/article" },
-    { text: "Exit", icon: <Logout />, path: "/" },
-];
-
 const SideBar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
     const location = useLocation();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+
+    const menuItems = [
+        {
+            text: "Dashboard",
+            icon: <DashboardSharp />,
+            path: "/admin",
+        },
+        { text: "User", icon: <Portrait />, path: "/admin/user" },
+        { text: "Article", icon: <Assignment />, path: "/admin/article" },
+        { text: "Quiz", icon: <QuizIcon />, path: "/admin/quiz" },
+        { text: "Exit", icon: <Logout />, onClick: handleLogout, }
+    ];
 
     const drawer = (
         <>
@@ -70,29 +80,49 @@ const SideBar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
             <List sx={{ px: 2 }}>
                 {menuItems.map((item, index) => {
                     const isActive = location.pathname === item.path;
+                    const commonStyles = {
+                        py: 1.5,
+                        mb: 1,
+                        borderRadius: 1,
+                        letterSpacing: 0.7,
+                        backgroundColor: isActive ? "#edf4fe" : "transparent",
+                        "&:hover": {
+                            backgroundColor: isActive ? "#D0ECFE" : "rgba(0, 0, 0, 0.04)",
+                        },
+                        "& .MuiListItemIcon-root": {
+                            color: isActive ? "#1877F2" : "inherit",
+                        },
+                        "& .MuiListItemText-primary": {
+                            color: isActive ? "#1877F2" : "inherit",
+                            fontWeight: isActive ? 600 : 400,
+                        },
+                    };
+
+                    // Nếu có item.onClick, không dùng component Link/to
+                    if (item.onClick) {
+                        return (
+                            <ListItemButton
+                                key={index}
+                                onClick={() => {
+                                    item.onClick();
+                                    if (isMobile) handleDrawerToggle();
+                                }}
+                                sx={commonStyles}
+                            >
+                                <ListItemIcon sx={{ mr: 1 }}>{item.icon}</ListItemIcon>
+                                <ListItemText primary={item.text} />
+                            </ListItemButton>
+                        );
+                    }
+
+                    // Nếu không có onClick, dùng Link như cũ
                     return (
                         <ListItemButton
                             key={index}
                             component={Link}
                             to={item.path}
                             onClick={isMobile ? handleDrawerToggle : undefined}
-                            sx={{
-                                py: 1.5,
-                                mb: 1,
-                                borderRadius: 1,
-                                letterSpacing: 0.7,
-                                backgroundColor: isActive ? "#edf4fe" : "transparent",
-                                "&:hover": {
-                                    backgroundColor: isActive ? "#D0ECFE" : "rgba(0, 0, 0, 0.04)",
-                                },
-                                "& .MuiListItemIcon-root": {
-                                    color: isActive ? "#1877F2" : "inherit",
-                                },
-                                "& .MuiListItemText-primary": {
-                                    color: isActive ? "#1877F2" : "inherit",
-                                    fontWeight: isActive ? 600 : 400,
-                                },
-                            }}
+                            sx={commonStyles}
                         >
                             <ListItemIcon sx={{ mr: 1 }}>{item.icon}</ListItemIcon>
                             <ListItemText primary={item.text} />

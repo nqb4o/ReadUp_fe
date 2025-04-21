@@ -40,10 +40,12 @@ export const AuthProvider = ({ children }) => {
                 setUser(response.data);
                 setIsAuthenticated(true);
                 sessionStorage.setItem('user', JSON.stringify(response.data));
+                return response.data.role === 'admin' ? 'admin' : 'user';
             }
         } catch (error) {
             console.error('Login failed:', error);
             logout();
+            throw error;
         }
     };
 

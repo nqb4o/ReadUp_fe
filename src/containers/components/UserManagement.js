@@ -22,6 +22,7 @@ import {
     CircularProgress,
     Snackbar,
     Alert,
+    FormControl, FormLabel, RadioGroup, FormControlLabel, Radio
 } from "@mui/material";
 import {
     Add,
@@ -53,6 +54,8 @@ const UserManagement = () => {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        password: "",
+        role: "",
     });
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -74,6 +77,7 @@ const UserManagement = () => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user.role,
             }));
             setUsers(fetchedUsers);
             setUserFetchError(null);
@@ -152,11 +156,15 @@ const UserManagement = () => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                password: user.password,
+                role: user.role,
             });
         } else {
             setFormData({
                 name: "",
                 email: "",
+                password: "",
+                role: "",
             });
         }
         setOpenModal(true);
@@ -180,6 +188,8 @@ const UserManagement = () => {
                     id: response.data.id,
                     name: response.data.name,
                     email: response.data.email,
+                    password: response.data.password,
+                    role: response.data.role,
                 };
                 setUsers([...users, newUser]);
                 showSnackbar("User created successfully");
@@ -368,10 +378,11 @@ const UserManagement = () => {
                                             direction={order}
                                             onClick={handleSort}
                                         >
-                                            Username
+                                            Tên người dùng
                                         </TableSortLabel>
                                     </TableCell>
                                     <TableCell>Email</TableCell>
+                                    <TableCell>Vai trò</TableCell>
                                     <TableCell />
                                 </TableRow>
                             </TableHead>
@@ -394,6 +405,7 @@ const UserManagement = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell>{user.email}</TableCell>
+                                            <TableCell>{user.role}</TableCell>
                                             <TableCell>
                                                 <IconButton
                                                     onClick={(e) => handleMenuClick(e, user)}
@@ -527,6 +539,73 @@ const UserManagement = () => {
                             "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
                         }}
                     />
+                    <TextField
+                        label="Password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleFormChange}
+                        fullWidth
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                "& fieldset": { borderColor: "grey.400" },
+                                "&:hover fieldset": { borderColor: "grey.600" },
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "grey.400",
+                                    boxShadow: "none",
+                                },
+                            },
+                            "& .MuiInputLabel-root": { color: "grey.600" },
+                            "& .MuiInputLabel-root.Mui-focused": { color: "grey.600" },
+                        }}
+                    />
+                    <FormControl
+                        component="fieldset"
+                        fullWidth
+                        margin="normal"
+                        sx={{
+                            "& .MuiFormLabel-root": { color: "grey.600" },
+                            "& .MuiFormLabel-root.Mui-focused": { color: "grey.600" },
+                        }}
+                    >
+                        <FormLabel component="legend">Role</FormLabel>
+                        <RadioGroup
+                            name="role"
+                            value={formData.role}
+                            onChange={handleFormChange}
+                            row
+                        >
+                            <FormControlLabel
+                                value="admin"
+                                control={
+                                    <Radio
+                                        sx={{
+                                            color: "grey.400",
+                                            '&.Mui-checked': {
+                                                color: "grey.600",
+                                            },
+                                        }}
+                                    />
+                                }
+                                label="Admin"
+                            />
+                            <FormControlLabel
+                                value="user"
+                                control={
+                                    <Radio
+                                        sx={{
+                                            color: "grey.400",
+                                            '&.Mui-checked': {
+                                                color: "grey.600",
+                                            },
+                                        }}
+                                    />
+                                }
+                                label="User"
+                            />
+                        </RadioGroup>
+                    </FormControl>
                     <Box
                         sx={{
                             display: "flex",

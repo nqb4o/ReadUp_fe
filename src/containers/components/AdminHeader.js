@@ -28,6 +28,8 @@ import {
     Modal,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminHeader = ({ isMobile, onDrawerToggle }) => {
     const [showSearch, setShowSearch] = useState(false);
@@ -35,17 +37,11 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
     const [anchorElNotif, setAnchorElNotif] = useState(null);
     const [openProfileModal, setOpenProfileModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
-
-    // Giả định thông tin người dùng hiện tại
-    const currentUser = {
-        username: "current_user",
-        email: "current.user@example.com",
-        role: "Admin",
-        createdAt: "2023-01-01",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    };
+    const { logout } = useAuth();
+    const currentUser = JSON.parse(sessionStorage.getItem("user"));
     const [formData, setFormData] = useState(currentUser);
     const [avatarPreview, setAvatarPreview] = useState(currentUser.avatar);
+    const navigate = useNavigate();
 
     const handleAvatarClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -96,6 +92,11 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
     const handleSave = () => {
         console.log("Saved user data:", formData);
         setEditMode(false);
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate("/");
     };
 
     return (
@@ -221,7 +222,7 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
                     {/* Avatar */}
                     <Avatar
                         alt="User"
-                        src="https://randomuser.me/api/portraits/women/44.jpg"
+                        src="https://randomuser.me/api/portraits"
                         onClick={handleAvatarClick}
                         sx={{
                             cursor: "pointer",
@@ -356,7 +357,7 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
                     }}
                 >
                     <Typography variant="body1" fontWeight="bold">
-                        Notifications
+                        Thông báo
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                         You have 2 unread messages
@@ -547,19 +548,19 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
                 <MenuItem>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Home sx={{ color: "#888" }} />
-                        <Typography>Home</Typography>
+                        <Typography>Trang Chủ</Typography>
                     </Box>
                 </MenuItem>
                 <MenuItem onClick={handleProfileClick}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <AdminPanelSettings sx={{ color: "#888" }} />
-                        <Typography>Profile</Typography>
+                        <Typography>Hồ Sơ</Typography>
                     </Box>
                 </MenuItem>
                 <MenuItem>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Settings sx={{ color: "#888" }} />
-                        <Typography>Settings</Typography>
+                        <Typography>Cài đặt</Typography>
                     </Box>
                 </MenuItem>
                 <MenuItem
@@ -569,8 +570,8 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
                     }}
                 >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography color="error" sx={{ color: "#FF5630" }}>
-                            Logout
+                        <Typography color="error" sx={{ color: "#FF5630" }} onClick={handleLogout}>
+                            Đăng Xuất
                         </Typography>
                     </Box>
                 </MenuItem>

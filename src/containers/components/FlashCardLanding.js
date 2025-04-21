@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { handleGetVocabulary } from "../../services/VocabularyServices"; // Import API service
+import { handleGetVocabularyByUserId } from "../../services/VocabularyServices"; // Import API service
 
 const FeatureSection = styled(Box)(({ theme }) => ({
     borderRadius: theme.spacing(2),
@@ -76,27 +76,30 @@ const FlashCard = () => {
     const navigate = useNavigate();
 
     // Fetch vocabulary data from API
-    // useEffect(() => {
-    //   const fetchVocabulary = async () => {
-    //     setIsFetching(true);
-    //     try {
-    //       const response = await handleGetVocabulary();
-    //       const data = response.data.map((item) => ({
-    //         word: item.word,
-    //         id: item.id,
-    //         user_id: item.user_id,
-    //         article_id: item.article_id,
-    //       }));
-    //       setFlashcardData(data);
-    //     } catch (err) {
-    //       setError("Không thể tải dữ liệu thẻ ghi nhớ. Vui lòng thử lại sau.");
-    //     } finally {
-    //       setIsFetching(false);
-    //     }
-    //   };
+    useEffect(() => {
+        const fetchVocabulary = async () => {
+            const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+            const user_id = userData.id;
+            console.log("User ID:", user_id); // Debugging line
+            setIsFetching(true);
+            try {
+                const response = await handleGetVocabularyByUserId(user_id);
+                const data = response.data.map((item) => ({
+                    word: item.word,
+                    id: item.id,
+                    user_id: item.user_id,
+                    article_id: item.article_id,
+                }));
+                setFlashcardData(data);
+            } catch (err) {
+                setError("Không thể tải dữ liệu thẻ ghi nhớ. Vui lòng thử lại sau.");
+            } finally {
+                setIsFetching(false);
+            }
+        };
 
-    //   fetchVocabulary();
-    // }, []);
+        fetchVocabulary();
+    }, []);
 
     // Translation function using MyMemory API
     const translateText = async (text) => {
@@ -136,14 +139,6 @@ const FlashCard = () => {
             setSelectedCard({ ...card, index });
             setShowDetails(true);
             translateText(card.word);
-        }
-    };
-
-    const handleCreateFlashcard = () => {
-        if (isAuthenticated) {
-            navigate("/create-set");
-        } else {
-            navigate("/login");
         }
     };
 
@@ -228,7 +223,7 @@ const FlashCard = () => {
                                                     90% sinh viên
                                                 </Typography>
                                                 <Typography variant="body1" color="text.secondary">
-                                                    những người sử dụng Quizlet báo cáo nhận được điểm cao
+                                                    những người sử dụng ReadUp báo cáo nhận được điểm cao
                                                     hơn
                                                 </Typography>
                                             </Box>
@@ -253,7 +248,7 @@ const FlashCard = () => {
                                 </Box>
                                 <Button
                                     variant="text"
-                                    onClick={handleCreateFlashcard}
+                                    onClick={() => navigate("/login")}
                                     sx={{
                                         color: "#fff",
                                         fontWeight: "bold",
@@ -283,10 +278,10 @@ const FlashCard = () => {
                         </Grid>
                     </FeatureSection>
                 </Container>
-            </Box>
+            </Box >
 
             {/* Second Section */}
-            <Box
+            < Box
                 sx={{
                     backgroundColor: "#fff",
                     width: "100vw",
@@ -295,7 +290,8 @@ const FlashCard = () => {
                     right: "50%",
                     marginLeft: "-50vw",
                     marginRight: "-50vw",
-                }}
+                }
+                }
             >
                 <Container maxWidth="lg">
                     <FeatureSection
@@ -337,10 +333,10 @@ const FlashCard = () => {
                         </Grid>
                     </FeatureSection>
                 </Container>
-            </Box>
+            </Box >
 
             {/* Third Section */}
-            <Box
+            < Box
                 sx={{
                     backgroundColor: "transparent",
                     width: "100vw",
@@ -390,7 +386,7 @@ const FlashCard = () => {
                         </Grid>
                     </FeatureSection>
                 </Container>
-            </Box>
+            </Box >
 
             {/* Explore Flashcards Section */}
             {/* <Container maxWidth="lg">

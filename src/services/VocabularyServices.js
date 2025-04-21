@@ -15,14 +15,27 @@ const handleAddVocabulary = (vocabData) => {
     });
 };
 
-const handleGetVocabulary = () => {
-    return axiosInstance.get("/api/vocabulary");
+const handleGetVocabularyByUserId = (user_id) => {
+    return axiosInstance.get(`/api/vocabulary/${user_id}`, {
+        headers: getAuthHeader(),
+    });
 };
 
-const handleGetVocabularyById = (id) => {
+const handleDeleteVocabulary = (id) => {
     return axiosInstance.get(`/api/vocabulary/${id}`, {
         headers: getAuthHeader(),
     });
 };
 
-export { handleAddVocabulary, handleGetVocabulary, handleGetVocabularyById };
+const handleGetVocabularyByArticleId = (articleId) => {
+    return axiosInstance.get(`/api/vocabulary/${articleId}`, {
+        headers: getAuthHeader(),
+    });
+};
+
+export {
+    handleAddVocabulary,
+    handleGetVocabularyByUserId,
+    handleGetVocabularyByArticleId,
+    handleDeleteVocabulary
+};

@@ -129,10 +129,15 @@ export default function Login(props) {
             const response = await handleLoginApi(email, password);
 
             if (response.status === 200) {
-                await login(response.data.token);
+                const role = await login(response.data.token); // Lấy vai trò từ hàm login
                 setLoginSuccess(true);
                 setTimeout(() => {
-                    navigate(path.HOME);
+                    // Chuyển hướng dựa trên vai trò
+                    if (role === 'admin') {
+                        navigate(path.ADMIN);
+                    } else {
+                        navigate(path.HOME);
+                    }
                 }, 1500);
             }
         } catch (error) {
@@ -163,11 +168,16 @@ export default function Login(props) {
                         getGoogleData.data.sub
                     );
 
-                    await login(response.data.accessToken);
+                    const role = await login(response.data.accessToken); // Lấy vai trò từ hàm login
                     setLoginSuccess(true);
 
                     setTimeout(() => {
-                        navigate(path.HOME);
+                        // Chuyển hướng dựa trên vai trò
+                        if (role === 'admin') {
+                            navigate(path.ADMIN);
+                        } else {
+                            navigate(path.HOME);
+                        }
                     }, 1500);
                 } else {
                     throw new Error('Unexpected response from server.');
@@ -284,7 +294,7 @@ export default function Login(props) {
                             Login with Google
                         </Button>
                         <Typography sx={{ textAlign: 'center' }}>
-                            Don&apos;t have an account?{' '}
+                            Don't have an account?{' '}
                             <Link
                                 href="/register"
                                 variant="body2"
