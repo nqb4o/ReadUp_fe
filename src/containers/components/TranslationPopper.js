@@ -51,119 +51,128 @@ const TranslationPopper = () => {
     }
   };
 
-  // Update the handleAddToDictionary function to send the selected word to the backend
-  const handleAddToDictionary = async () => {
-    const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
-    const user_id = userData.id;
+    // Update the handleAddToDictionary function to send the selected word to the backend
+    const handleAddToDictionary = async () => {
+        if (!originalText) {
+            setSnackbarMessage("Không có từ nào để thêm vào từ điển.");
+            setSnackbarOpen(true);
+            return;
+        }
+        const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
+        const user_id = userData.id;
 
-    if (!user_id) {
-      setSnackbarMessage("Vui lòng đăng nhập để thêm từ vào thư viện");
-      setSnackbarOpen(true);
-      return;
-    }
+        if (!user_id) {
+            setSnackbarMessage("Vui lòng đăng nhập để thêm từ vào thư viện");
+            setSnackbarOpen(true);
+            return;
+        }
 
-    const pathname = window.location.pathname;
-    const pathSegments = pathname.split("/");
-    const article_id = pathSegments[pathSegments.length - 1];
+        const pathname = window.location.pathname;
+        const pathSegments = pathname.split("/");
+        const article_id = pathSegments[pathSegments.length - 1];
 
-    // Kiểm tra article_id có tồn tại hay không
-    if (!article_id) {
-      console.error("Invalid article ID from URL:", article_id);
-      setSnackbarMessage(
-        "Không thể xác định bài viết hiện tại. Vui lòng thử lại."
-      );
-      setSnackbarOpen(true);
-      return;
-    }
+        // Kiểm tra article_id có tồn tại hay không
+        if (!article_id) {
+            console.error("Invalid article ID from URL:", article_id);
+            setSnackbarMessage(
+                "Không thể xác định bài viết hiện tại. Vui lòng thử lại."
+            );
+            setSnackbarOpen(true);
+            return;
+        }
 
-    try {
-      const vocabData = {
-        user_id: user_id,
-        word: originalText,
-        article_id: article_id,
-      };
+        try {
+            const vocabData = {
+                user_id: user_id,
+                word: originalText,
+                article_id: article_id,
+            };
 
-      const response = await handleAddVocabulary(vocabData);
+            const response = await handleAddVocabulary(vocabData);
 
-      if (response.status === 201) {
-        setSnackbarMessage(`Đã thêm "${originalText}" vào thư viện`);
-      } else {
-        setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
+            if (response.status === 201) {
+                setSnackbarMessage(`Đã thêm "${originalText}" vào thư viện`);
+            } else {
+                setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
+            }
+
+            setSnackbarOpen(true);
+        } catch (error) {
+            console.error("Error adding word to library:", error);
+            setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
+            setSnackbarOpen(true);
+        }
+    };
+
+    useEffect(() => {
+        if (originalText) {
+            translateText(originalText);
+        }
+    }, [originalText]);
+
+    // Update the handleMouseUp function to trigger the translation API
+    const handleMouseUp = () => {
+        const selection = window.getSelection();
+        const selected = selection.toString().trim();
+
+        if (selected) {
+            setOriginalText(selected);
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+
+            setPopperPosition({
+                top: rect.top + window.scrollY - 40,
+                left: rect.right + window.scrollX + 10,
+            });
+
+            setOpenPopper(true);
+            // Không gọi translateText(selected) tại đây
+        } else {
+            setOpenPopper(false);
+            setTranslatedText("");
+            setOriginalText("");
+            setError(null);
+        }
       }
 
-      setSnackbarOpen(true);
-    } catch (error) {
-      console.error("Error adding word to library:", error);
-      setSnackbarMessage("Không thể thêm từ vào thư viện. Vui lòng thử lại.");
-      setSnackbarOpen(true);
-    }
-  };
-
-  // Update the handleMouseUp function to trigger the translation API
-  const handleMouseUp = () => {
-    const selection = window.getSelection();
-    const selected = selection.toString().trim();
-
-    if (selected) {
-      setOriginalText(selected);
-
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-
-      setPopperPosition({
-        top: rect.top + window.scrollY - 40,
-        left: rect.right + window.scrollX + 10,
-      });
-
-      setOpenPopper(true);
-
-      // translateText(selected);
-    } else {
-      setOpenPopper(false);
-      setTranslatedText("");
-      setOriginalText("");
-      setError(null);
-    }
-  };
-
-  // Đóng Snackbar
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
-  // Thêm sự kiện bôi đen cho toàn bộ document
-  useEffect(() => {
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
+    // Đóng Snackbar
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setSnackbarOpen(false);
     };
+
+    // Thêm sự kiện bôi đen cho toàn bộ document
+    useEffect(() => {
+      document.addEventListener("mouseup", handleMouseUp);
+      return () => {
+          document.removeEventListener("mouseup", handleMouseUp);
+      };
   }, []);
 
   // Cập nhật vị trí popper khi scroll
   useEffect(() => {
-    const handleScroll = () => {
-      if (openPopper) {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-          const range = selection.getRangeAt(0);
-          const rect = range.getBoundingClientRect();
-          setPopperPosition({
-            top: rect.top + window.scrollY - 40,
-            left: rect.right + window.scrollX + 10,
-          });
-        }
-      }
-    };
+      const handleScroll = () => {
+          if (openPopper) {
+              const selection = window.getSelection();
+              if (selection.rangeCount > 0) {
+                  const range = selection.getRangeAt(0);
+                  const rect = range.getBoundingClientRect();
+                  setPopperPosition({
+                      top: rect.top + window.scrollY - 40,
+                      left: rect.right + window.scrollX + 10,
+                  });
+              }
+          }
+      };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+          window.removeEventListener("scroll", handleScroll);
+      };
   }, [openPopper]);
-
+  
   return (
     <>
       {/* Tạo một div ẩn làm anchor cho Popper */}

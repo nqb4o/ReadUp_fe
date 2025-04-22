@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import AppTheme from "../shared-theme/AppTheme";
-import AppAppBar from "../components/AppAppBar";
+import AppBarLanding from "../components/AppBarLanding";
 import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 import ScrollToTop from "../../utils/scrollToTop";
@@ -28,11 +28,11 @@ export default function HomePage(props) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      
-      {/* Khi CHƯA đăng nhập: Hiển thị AppAppBar, Container, và Footer */}
+
+      {/* Khi CHƯA đăng nhập: Hiển thị AppBarLanding, Container, và Footer */}
       {!isAuthenticated && (
         <>
-          <AppAppBar />
+          <AppBarLanding />
           <Container
             maxWidth="xl"
             component="main"

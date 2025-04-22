@@ -33,6 +33,7 @@ import {
     updateArticleApi,
     deleteArticleApi,
 } from "../../services/ArticleService";
+import { parse } from "papaparse"; // Thư viện xử lý file CSV
 
 const ArticleManagement = () => {
     const [articles, setArticles] = useState([]);
@@ -48,8 +49,18 @@ const ArticleManagement = () => {
     const [formData, setFormData] = useState({
         title: "",
         content: "",
-        publicationDate: "",
+        image_url: "",
     });
+
+    // Format date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+    };
 
     // Fetch articles from backend
     useEffect(() => {
@@ -123,7 +134,7 @@ const ArticleManagement = () => {
             setFormData({
                 title: "",
                 content: "",
-                publicationDate: "",
+                image_url: "",
             });
         }
         setOpenModal(true);
@@ -186,19 +197,65 @@ const ArticleManagement = () => {
         setPage(0);
     };
 
+    const handleUploadCsv = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const { data } = parse(text, { header: true });
+
+            // Lọc dữ liệu hợp lệ từ file CSV
+            const validArticles = data.map((row) => ({
+                title: row.Title?.trim(),
+                content: row.Content?.trim(),
+                image_url: row["Image Link"]?.trim(),
+            })).filter(
+                (article) => article.title && article.content && article.image_url
+            );
+
+            // Gửi từng bài báo hợp lệ đến API
+            const responses = await Promise.all(
+                validArticles.map((article) => createArticleApi(article))
+            );
+
+            // Cập nhật danh sách bài báo
+            setArticles([...articles, ...responses.map((res) => res.data)]);
+            alert("Articles added successfully!");
+        } catch (error) {
+            console.error("Error uploading CSV:", error);
+            alert("Failed to upload articles from CSV.");
+        }
+    };
+
     return (
         <Box sx={{ p: 0 }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
                 <Typography variant="h5" component="h1">
                     Articles
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => handleOpenModal("add")}
-                >
-                    New article
-                </Button>
+                <Box>
+                    <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={() => handleOpenModal("add")}
+                        sx={{ mr: 2 }}
+                    >
+                        New article
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        component="label"
+                    >
+                        Upload CSV
+                        <input
+                            type="file"
+                            accept=".csv"
+                            hidden
+                            onChange={handleUploadCsv}
+                        />
+                    </Button>
+                </Box>
             </Box>
 
             {selected.length > 0 && (
@@ -268,11 +325,11 @@ const ArticleManagement = () => {
                                 </TableCell>
                                 <TableCell>
                                     <TableSortLabel active direction={order} onClick={handleSort}>
-                                        Title
+                                        Tiêu đề
                                     </TableSortLabel>
                                 </TableCell>
-                                <TableCell>Content</TableCell>
-                                <TableCell>Publication Date</TableCell>
+                                <TableCell>Nội dung</TableCell>
+                                <TableCell>Ngày tạo</TableCell>
                                 <TableCell />
                             </TableRow>
                         </TableHead>
@@ -293,7 +350,7 @@ const ArticleManagement = () => {
                                                 ? `${article.content.substring(0, 50)}...`
                                                 : article.content}
                                         </TableCell>
-                                        <TableCell>{article.publicationDate}</TableCell>
+                                        <TableCell>{formatDate(article.created_at)}</TableCell>
                                         <TableCell>
                                             <IconButton
                                                 onClick={(e) => handleMenuClick(e, article)}
@@ -367,14 +424,14 @@ const ArticleManagement = () => {
                         margin="normal"
                     />
                     <TextField
-                        label="Publication Date"
-                        name="publicationDate"
-                        type="date"
-                        value={formData.publicationDate}
+                        label="Image URL"
+                        name="image_url"
+                        type="url"
+                        value={formData.image_url}
                         onChange={handleFormChange}
                         fullWidth
                         margin="normal"
-                        InputLabelProps={{ shrink: true }}
+                        multiline
                     />
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
                         <Button onClick={handleCloseModal} sx={{ mr: 2 }}>

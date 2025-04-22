@@ -10,11 +10,10 @@ import ProtectedRoute from "./ProtectedRoute.js";
 import AdminPage from "../containers/components/AdminPage.js";
 import UserManagement from "../containers/components/UserManagement.js";
 import ArticleManagement from "../containers/components/ArticleManagement.js";
+import QuizManagement from "../containers/components/QuizManagement.js";
 import Dashboard from "../containers/components/Dashboard.js";
 import Vocabulary from "../containers/components/Vocabulary.js";
-import FlashCard from "../containers/components/FlashCard.js";
-import ArticlePage from "../containers/system/ArticlePage.js";
-import ArticleDetail from "../containers/components/ArticleDetail.js";
+import FlashCardLanding from "../containers/components/FlashCardLanding.js";
 import PublicHomePage from "../containers/components/PublicHomePage.js";
 import UserHomePage from "../containers/components/UserHomePage.js";
 import { useAuth } from "../contexts/AuthContext.js";
@@ -23,114 +22,111 @@ import UserArticlePage from "../containers/components/UserArticlePage.js";
 import UserArticleDetail from "../containers/components/UserArticleDetail.js";
 import UserQuestion from "../containers/components/UserQuestion.js";
 import FlashCardArticle from "../containers/components/FlashCardArticle.js";
+import UserQuiz from "../containers/components/UserQuiz.js";
 
 const RootRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-  return isAuthenticated ? <UserHomePage /> : <PublicHomePage />;
+    return isAuthenticated ? <UserHomePage /> : <PublicHomePage />;
 };
 
 const router = createBrowserRouter([
-  {
-    path: path.HOME,
-    element: <HomePage />,
-    children: [
-      {
-        path: "",
-        element: <RootRoute />,
-      },
-      {
-        path: path.ARTICLE,
-        element: <ArticlePage />,
-      },
-      {
-        path: path.VOCABULARY,
-        element: <Vocabulary />,
-      },
-      {
-        path: path.FLASHCARD,
-        element: <FlashCard />,
-      },
-      {
-        path: path.USERFLASHCARD,
-        element: <UserFlashCard />,
-      },
-      {
-        path: path.USERARTICLE,
-        element: <UserArticlePage />,
-      },
-      {
-        path: `${path.ARTICLE}/:id`,
-        element: <ArticleDetail />,
-        loader: ({ params }) => {
-          console.log(params.id);
-          return { postId: params.id };
-        },
-      },
-      {
-        path: `${path.USERARTICLE}/:id`,
-        element: <UserArticleDetail />,
-      },
-      {
-        path: `${path.USERFLASHCARD}/:id`,
-        element: <FlashCardArticle />,
-      },
-      {
-        path: `${path.QUESTION}?/:id`,
-        element: <UserQuestion />,
-      },
-    ],
-  },
-  {
-    path: path.LOGIN,
-    element: (
-      <ProtectedRoute>
-        <Login />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: path.REGISTER,
-    element: (
-      <ProtectedRoute>
-        <Register />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: path.RESETPASSWORD,
-    element: (
-      <ProtectedRoute>
-        <EnterNewPassword />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: path.ADMIN,
-    element: (
-      <PrivateRoute requireAdmin={true}>
-        <AdminPage />
-      </PrivateRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: path.ADMIN_USER,
-        element: <UserManagement />,
-      },
-      {
-        path: path.ADMIN_ARTICLE,
-        element: <ArticleManagement />,
-      },
-    ],
-  },
+    {
+        path: path.HOME,
+        element: <HomePage />,
+        children: [
+            {
+                path: "",
+                element: <RootRoute />,
+            },
+            {
+                path: path.VOCABULARY,
+                element: <Vocabulary />,
+            },
+            {
+                path: path.FLASHCARD,
+                element: <FlashCardLanding />,
+            },
+            {
+                path: path.USER_FLASHCARD,
+                element: <UserFlashCard />,
+            },
+            {
+                path: path.USER_ARTICLE,
+                element: <UserArticlePage />,
+            },
+            {
+                path: `${path.USER_ARTICLE}/:id`,
+                element: <UserArticleDetail />,
+            },
+            {
+                path: `${path.USER_FLASHCARD}/:id`,
+                element: <FlashCardArticle />,
+            },
+            {
+                path: `${path.QUESTION}?/:id`,
+                element: <UserQuestion />,
+            },
+            {
+                path: path.QUIZ,
+                element: <UserQuiz />,
+            }
+        ],
+    },
+    {
+        path: path.LOGIN,
+        element: (
+            <ProtectedRoute>
+                <Login />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: path.REGISTER,
+        element: (
+            <ProtectedRoute>
+                <Register />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: path.RESETPASSWORD,
+        element: (
+            <ProtectedRoute>
+                <EnterNewPassword />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: path.ADMIN,
+        element: (
+            <PrivateRoute requireAdmin={true}>
+                <AdminPage />
+            </PrivateRoute>
+        ),
+        children: [
+            {
+                index: true,
+                element: <Dashboard />,
+            },
+            {
+                path: path.ADMIN_USER,
+                element: <UserManagement />,
+            },
+            {
+                path: path.ADMIN_ARTICLE,
+                element: <ArticleManagement />,
+            },
+            {
+                path: path.ADMIN_QUIZ,
+                element: <QuizManagement />,
+            },
+        ],
+    },
 ]);
 
 export default router;
