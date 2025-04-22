@@ -72,7 +72,6 @@ const FlashCard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [error, setError] = useState(null);
-    const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     // Fetch vocabulary data from API
@@ -80,7 +79,6 @@ const FlashCard = () => {
         const fetchVocabulary = async () => {
             const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
             const user_id = userData.id;
-            console.log("User ID:", user_id); // Debugging line
             setIsFetching(true);
             try {
                 const response = await handleGetVocabularyByUserId(user_id);
@@ -140,10 +138,6 @@ const FlashCard = () => {
             setShowDetails(true);
             translateText(card.word);
         }
-    };
-
-    const handleSearchFlashcards = () => {
-        navigate("/search");
     };
 
     return (

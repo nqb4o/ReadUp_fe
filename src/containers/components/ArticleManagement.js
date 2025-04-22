@@ -96,8 +96,6 @@ const ArticleManagement = () => {
         }
     };
 
-    console.log(filteredArticles)
-
     const handleSelectClick = (id) => {
         const selectedIndex = selected.indexOf(id);
         let newSelected = [];
@@ -215,8 +213,6 @@ const ArticleManagement = () => {
             })).filter(
                 (article) => article.title && article.content && article.image_url
             );
-
-            console.log("Valid articles to upload:", validArticles); // Log dữ liệu hợp lệ
 
             // Gửi từng bài báo hợp lệ đến API
             const responses = await Promise.all(

@@ -101,8 +101,9 @@ const UserQuestion = () => {
 
         try {
             const response = await postQuizSubmit(payload);
-            console.log("Quiz submitted successfully:", response.data);
-            alert("Bài kiểm tra đã được gửi thành công!");
+            if (response) {
+                alert("Bài kiểm tra đã được gửi thành công!");
+            }
         } catch (error) {
             console.error("Error submitting quiz:", error);
             alert("Có lỗi xảy ra khi gửi bài kiểm tra.");

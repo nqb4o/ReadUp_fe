@@ -90,7 +90,6 @@ const AdminHeader = ({ isMobile, onDrawerToggle }) => {
     };
 
     const handleSave = () => {
-        console.log("Saved user data:", formData);
         setEditMode(false);
     };
 

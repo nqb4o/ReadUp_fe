@@ -308,7 +308,6 @@ const UserHomePage = () => {
             setIsFetchingQuizzes(true);
             try {
                 const response = await getQuizQuestionApi();
-                console.log("Quizzes response:", response.data); // Debugging line
                 if (response.data.questions) {
                     setQuizData(response.data.questions);
                 } else {

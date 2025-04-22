@@ -90,7 +90,6 @@ const UserHeader = () => {
     };
 
     const handleSearchResultClick = (result) => {
-        console.log("Selected:", result);
         setSearchQuery(result);
         handleSearchClose();
     };

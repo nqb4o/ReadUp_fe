@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Divider,
@@ -34,7 +34,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   padding: "8px 12px",
 }));
 
-export default function AppAppBar() {
+export default function AppBarLanding() {
   const { logout } = useAuth();
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();

@@ -2,13 +2,13 @@ import React from 'react';
 import Container from '@mui/material/Container';
 import AppTheme from '../shared-theme/AppTheme';
 import ArticleManagement from '../components/ArticleManagement';
-import AppAppBar from '../components/AppAppBar';
+import AppBarLanding from '../components/AppBarLanding';
 
 function AdminPage(props) {
 
     return (
         <AppTheme {...props}>
-            <AppAppBar />
+            <AppBarLanding />
             <Container
                 maxWidth="lg"
                 component="main"

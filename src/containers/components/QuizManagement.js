@@ -248,8 +248,6 @@ const QuizManagement = () => {
                     question.wrong1 && question.wrong2 && question.wrong3
             );
 
-            console.log("Valid questions to upload:", validQuestions);
-
             // Send each valid question to the API using the imported createQuizQuestion function
             const responses = await Promise.all(
                 validQuestions.map((question) => createQuizQuestion(question))

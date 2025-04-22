@@ -6,8 +6,6 @@ import {
     Button,
     Card,
     CardContent,
-    CircularProgress,
-    Alert,
     Container,
     CardMedia
 } from "@mui/material";
@@ -24,7 +22,6 @@ const UserArticleDetail = () => {
     const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [summary, setSummary] = useState("");
 
     const generateSummary = async (content, setSummary) => {
@@ -70,7 +67,6 @@ const UserArticleDetail = () => {
                 articleTitle: title,
                 articleContent: content,
             });
-            console.log("Chatbot initialized with article details.");
         } catch (error) {
             console.error("Error initializing chatbot with article:", error);
         }
