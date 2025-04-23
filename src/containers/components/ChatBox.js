@@ -12,7 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 
-const ChatBox = () => {
+const ChatBox = ({ chatbotReady = true }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([
@@ -172,8 +172,11 @@ const ChatBox = () => {
                         <TextField
                             fullWidth
                             size="small"
-                            placeholder="Write a message..."
+                            placeholder={
+                                chatbotReady ? "Write a message..." : "Chatbot is initializing..."
+                            }
                             value={message}
+                            disabled={!chatbotReady}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyPress={(e) => {
                                 if (e.key === "Enter") handleSendMessage();

@@ -14,4 +14,5 @@ export const path = {
     USER_ARTICLE: "/articles",
     QUESTION: "/questions",
     QUIZ: "/quiz",
+    QUIZ_ATTEMPT: "/quiz-attempt",
 };
