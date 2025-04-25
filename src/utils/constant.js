@@ -12,6 +12,7 @@ export const path = {
     FLASHCARD: "/flashcard",
     USER_FLASHCARD: "/flashcards",
     USER_ARTICLE: "/articles",
+    YOUR_LIBRARY: "/library",
     QUESTION: "/questions",
     QUIZ: "/quiz",
 };

@@ -23,6 +23,7 @@ import UserArticleDetail from "../containers/components/UserArticleDetail.js";
 import UserQuestion from "../containers/components/UserQuestion.js";
 import FlashCardArticle from "../containers/components/FlashCardArticle.js";
 import UserQuiz from "../containers/components/UserQuiz.js";
+import YourLibrary from "../containers/components/YourLibrary.js";
 
 const RootRoute = () => {
     const { isAuthenticated, loading } = useAuth();
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
             {
                 path: `${path.USER_FLASHCARD}/:id`,
                 element: <FlashCardArticle />,
+            },
+            {
+                path: path.YOUR_LIBRARY,
+                element: <YourLibrary />,
             },
             {
                 path: `${path.QUESTION}?/:id`,
