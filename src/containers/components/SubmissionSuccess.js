@@ -10,15 +10,23 @@ import {
     LinearProgress,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { useNavigate } from 'react-router-dom';
+import { path } from '../../utils/constant.js';
 
 const SubmissionSuccess = ({
     quizResult,
     onRetry = () => { },
-    onViewReport = () => { },
+    onViewReport,
     onGoHome = () => { },
 }) => {
-    const { correct_answers = 0, total_questions = 20 } = quizResult || {};
+    const { correct_answers = 0, total_questions = 20, attempt_id } = quizResult || {};
     const percentage = Math.round((correct_answers / total_questions) * 100);
+    const navigate = useNavigate();
+    const handleViewReport = onViewReport || (() => {
+        if (attempt_id) {
+            navigate(`/quiz-attempt/${attempt_id}`);
+        }
+    });
 
     return (
         <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
@@ -63,7 +71,7 @@ const SubmissionSuccess = ({
                     <Button variant="outlined" onClick={onRetry}>
                         Làm lại
                     </Button>
-                    <Button variant="contained" onClick={onViewReport}>
+                    <Button variant="contained" onClick={handleViewReport}>
                         Xem chi tiết
                     </Button>
                     <Button color="secondary" onClick={onGoHome}>

@@ -23,6 +23,7 @@ const UserArticleDetail = () => {
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState("");
+    const [chatbotReady, setChatbotReady] = useState(false);
 
     const generateSummary = async (content, setSummary) => {
         try {
@@ -67,8 +68,9 @@ const UserArticleDetail = () => {
                 articleTitle: title,
                 articleContent: content,
             });
+            setChatbotReady(true);
         } catch (error) {
-            console.error("Error initializing chatbot with article:", error);
+            setChatbotReady(false);
         }
     };
 
@@ -249,7 +251,7 @@ const UserArticleDetail = () => {
                     />
                 </CardContent>
             </Card>
-            <ChatBox />
+            <ChatBox chatbotReady={chatbotReady} />
             <TranslationPopper />
         </Box>
     );
