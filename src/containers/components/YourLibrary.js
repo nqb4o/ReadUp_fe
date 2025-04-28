@@ -11,7 +11,6 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider,
   Button,
   Chip,
   CircularProgress,
@@ -19,11 +18,8 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { useNavigate } from "react-router-dom";
-import {
-  handleGetVocabularyAndArticleByUserId,
-  handleGetAllVocabularyAndArticleByUserId,
-} from "../../services/ArticleService";
-import { getQuizQuestionAndAnswerApi } from "../../services/QuizService"; // Adjust the import path as needed
+import { handleGetVocabularyByUserId } from "../../services/VocabularyServices";
+import { getAttemptDetail } from "../../services/QuizService";
 
 const YourLibrary = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -34,14 +30,13 @@ const YourLibrary = () => {
   const [error, setError] = useState({});
   const [vocabulary, setVocabulary] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
-  const [questions, setQuestions] = useState([]); // State for questions data
+  const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
 
   // Get user_id from sessionStorage
   const userData = JSON.parse(sessionStorage.getItem("user") || "{}");
   const user_id = userData.id;
 
-  // Fetch vocabulary data
   useEffect(() => {
     const fetchVocabulary = async () => {
       if (!user_id) {
@@ -54,7 +49,7 @@ const YourLibrary = () => {
 
       setIsLoading((prev) => ({ ...prev, vocabulary: true }));
       try {
-        const response = await handleGetVocabularyAndArticleByUserId(user_id);
+        const response = await handleGetVocabularyByUserId(user_id);
         setVocabulary(response.data);
         setError((prev) => ({ ...prev, vocabulary: null }));
       } catch (err) {
@@ -71,7 +66,6 @@ const YourLibrary = () => {
     fetchVocabulary();
   }, [user_id]);
 
-  // Fetch flashcards data
   useEffect(() => {
     const fetchFlashcards = async () => {
       if (!user_id) {
@@ -84,7 +78,7 @@ const YourLibrary = () => {
 
       setIsLoading((prev) => ({ ...prev, flashcards: true }));
       try {
-        const response = await handleGetAllVocabularyAndArticleByUserId(user_id);
+        const response = await handleGetVocabularyByUserId(user_id);
         setFlashcards(response.data);
         setError((prev) => ({ ...prev, flashcards: null }));
       } catch (err) {
@@ -101,7 +95,6 @@ const YourLibrary = () => {
     fetchFlashcards();
   }, [user_id]);
 
-  // Fetch questions data
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!user_id) {
@@ -114,8 +107,8 @@ const YourLibrary = () => {
 
       setIsLoading((prev) => ({ ...prev, questions: true }));
       try {
-        const response = await getQuizQuestionAndAnswerApi(user_id);
-        setQuestions(response.data); // Assuming response.data contains the questions array
+        const response = await getAttemptDetail(user_id);
+        setQuestions(response.data);
         setError((prev) => ({ ...prev, questions: null }));
       } catch (err) {
         setError((prev) => ({
@@ -283,11 +276,22 @@ const YourLibrary = () => {
       {tabValue === 0 && (
         <>
           {/* Filter and Search Bar */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "center" },
+              mb: 3,
+              gap: 2,
+            }}
+          >
             <Select
               value={filter}
               onChange={handleFilterChange}
-              sx={{ minWidth: 120 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 120 },
+              }}
             >
               <MenuItem value="Sắp xếp">Sắp xếp</MenuItem>
               <MenuItem value="Tăng dần A-Z">Tăng dần A-Z</MenuItem>
@@ -298,9 +302,11 @@ const YourLibrary = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
                 border: "1px solid #ccc",
                 borderRadius: "20px",
                 pl: 2,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               <InputBase
@@ -380,8 +386,11 @@ const YourLibrary = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: 2,
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                },
+                gap: { xs: 1, sm: 2 },
               }}
             >
               {filteredVocabulary.map((item) => (
@@ -410,8 +419,8 @@ const YourLibrary = () => {
                     src={item.image}
                     alt={item.word}
                     sx={{
-                      width: 80,
-                      height: 80,
+                      width: { xs: 60, sm: 80 },
+                      height: { xs: 60, sm: 80 },
                       borderRadius: "8px",
                       mr: 2,
                       objectFit: "cover",
@@ -421,7 +430,7 @@ const YourLibrary = () => {
                     <Typography
                       sx={{
                         fontWeight: "bold",
-                        fontSize: "1.1rem",
+                        fontSize: { xs: "1rem", sm: "1.1rem" },
                         color: "#333",
                       }}
                     >
@@ -463,11 +472,22 @@ const YourLibrary = () => {
       {tabValue === 1 && (
         <>
           {/* Filter and Search Bar */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "center" },
+              mb: 3,
+              gap: 2,
+            }}
+          >
             <Select
               value={filter}
               onChange={handleFilterChange}
-              sx={{ minWidth: 120 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 120 },
+              }}
             >
               <MenuItem value="Sắp xếp">Sắp xếp</MenuItem>
               <MenuItem value="Tăng dần A-Z">Tăng dần A-Z</MenuItem>
@@ -478,9 +498,11 @@ const YourLibrary = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
                 border: "1px solid #ccc",
                 borderRadius: "20px",
                 pl: 2,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               <InputBase
@@ -560,8 +582,12 @@ const YourLibrary = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
-                gap: 2,
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(4, 1fr)",
+                },
+                gap: { xs: 1, sm: 2 },
               }}
             >
               {filteredFlashcards.map((flashcard) => (
@@ -579,38 +605,28 @@ const YourLibrary = () => {
                     transition: "background-color 0.2s",
                     display: "flex",
                     alignItems: "center",
+                    justifyContent: "center",
                     cursor: "pointer",
+                    minHeight: { xs: 150, sm: 200 },
                   }}
                   onClick={() =>
                     handleNavigateToFlashcardById(flashcard.article_id)
                   }
                 >
                   <Box
-                    component="img"
-                    src={flashcard.image}
-                    alt={flashcard.title}
                     sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: "8px",
-                      mr: 2,
-                      objectFit: "cover",
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                  />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                        fontSize: "1.1rem",
-                        color: "#333",
-                      }}
-                    >
-                      {flashcard.title}
-                    </Typography>
+                  >
                     <Typography
                       variant="body2"
                       sx={{
-                        color: "#666",
+                        fontWeight: "bold",
+                        fontSize: "24px",
+                        color: "#000",
                         mt: 0.5,
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
@@ -619,7 +635,7 @@ const YourLibrary = () => {
                         textOverflow: "ellipsis",
                       }}
                     >
-                      Words: {flashcard.word.join(", ") || "N/A"}
+                      {flashcard.word}
                     </Typography>
                   </Box>
                 </Box>
@@ -632,11 +648,22 @@ const YourLibrary = () => {
       {tabValue === 2 && (
         <>
           {/* Filter and Search Bar */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: { xs: "stretch", sm: "center" },
+              mb: 3,
+              gap: 2,
+            }}
+          >
             <Select
               value={filter}
               onChange={handleFilterChange}
-              sx={{ minWidth: 120 }}
+              sx={{
+                minWidth: { xs: "100%", sm: 120 },
+              }}
             >
               <MenuItem value="Sắp xếp">Sắp xếp</MenuItem>
               <MenuItem value="Tăng dần A-Z">Tăng dần A-Z</MenuItem>
@@ -647,9 +674,11 @@ const YourLibrary = () => {
               sx={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
                 border: "1px solid #ccc",
                 borderRadius: "20px",
                 pl: 2,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               <InputBase
@@ -726,7 +755,18 @@ const YourLibrary = () => {
               </Button>
             </Box>
           ) : (
-            <List sx={{ px: 0 }}>
+            <List
+              sx={{
+                px: 0,
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: { xs: 1, sm: 2 },
+              }}
+            >
               {filteredQuestions.map((attempt) => (
                 <React.Fragment key={attempt.id}>
                   <ListItem
@@ -745,18 +785,6 @@ const YourLibrary = () => {
                       handleNavigateToArticleById(attempt.article_id)
                     }
                   >
-                    <Box
-                      component="img"
-                      src={attempt.image}
-                      alt={attempt.title}
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: "8px",
-                        mr: 2,
-                        objectFit: "cover",
-                      }}
-                    />
                     <ListItemText
                       primary={
                         <Box
@@ -767,15 +795,6 @@ const YourLibrary = () => {
                             flexWrap: "wrap",
                           }}
                         >
-                          <Typography
-                            sx={{
-                              fontWeight: "bold",
-                              fontSize: "1.1rem",
-                              color: "#333",
-                            }}
-                          >
-                            {attempt.title}
-                          </Typography>
                           <Chip
                             label={`${attempt.correct_answers}/${attempt.total_questions}`}
                             sx={{
@@ -794,33 +813,16 @@ const YourLibrary = () => {
                               fontWeight: 500,
                             }}
                           />
-                          <Box
-                            sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}
-                          >
-                            {attempt.tags &&
-                              attempt.tags.map((tag, index) => (
-                                <Chip
-                                  key={index}
-                                  label={tag}
-                                  size="small"
-                                  sx={{
-                                    bgcolor: "#e8f0fe",
-                                    color: "#1967d2",
-                                    fontWeight: 400,
-                                  }}
-                                />
-                              ))}
-                          </Box>
                         </Box>
                       }
                       secondary={
                         <Box sx={{ mt: 0.5 }}>
                           <Typography variant="body2" sx={{ color: "#666" }}>
-                            Bắt đầu:{" "}
+                            Ngày bắt đầu:{" "}
                             {new Date(attempt.started_at).toLocaleString()}
                           </Typography>
                           <Typography variant="body2" sx={{ color: "#666" }}>
-                            Kết thúc:{" "}
+                            Ngày kết thúc:{" "}
                             {new Date(attempt.ended_at).toLocaleString()}
                           </Typography>
                           <Typography
@@ -848,7 +850,6 @@ const YourLibrary = () => {
                       }
                     />
                   </ListItem>
-                  <Divider sx={{ my: 1 }} />
                 </React.Fragment>
               ))}
             </List>

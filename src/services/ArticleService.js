@@ -19,18 +19,6 @@ const getArticleByIdApi = (id) => {
     });
 };
 
-const handleGetVocabularyAndArticleByUserId = (user_id) => {
-    return axiosInstance.get(`/api/article/vocabulary/${user_id}`, {
-        headers: getAuthHeader(),
-    });
-};
-
-const handleGetAllVocabularyAndArticleByUserId = (user_id) => {
-    return axiosInstance.get(`/api/article/vocabularys/${user_id}`, {
-        headers: getAuthHeader(),
-    });
-};
-
 const createArticleApi = (articleData) => {
     return axiosInstance.post("/api/article", articleData, {
         headers: getAuthHeader(),
@@ -54,7 +42,5 @@ export {
     getArticleByIdApi,
     createArticleApi,
     updateArticleApi,
-    deleteArticleApi,
-    handleGetVocabularyAndArticleByUserId,
-    handleGetAllVocabularyAndArticleByUserId,
+    deleteArticleApi
 };

@@ -30,7 +30,7 @@ export default function HomePage(props) {
       <CssBaseline enableColorScheme />
 
       {/* Khi CHƯA đăng nhập: Hiển thị AppBarLanding, Container, và Footer */}
-      {!isAuthenticated && (
+      {isAuthenticated && (
         <>
           <AppBarLanding />
           <Container
@@ -51,7 +51,7 @@ export default function HomePage(props) {
       )}
 
       {/* Khi ĐÃ đăng nhập: Hiển thị Sidebar, Drawer, và MainContent */}
-      {isAuthenticated && (
+      {!isAuthenticated && (
         <Box sx={{ display: "flex" }}>
           {/* Sidebar cho tablet/PC */}
           <Box

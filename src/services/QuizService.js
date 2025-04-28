@@ -15,12 +15,6 @@ const getQuizQuestionApi = () => {
     });
 }
 
-const getQuizQuestionAndAnswerApi = (id) => {
-    return axiosInstance.get(`/api/quiz/questions/answers/${id}`, {
-        headers: getAuthHeader(),
-    });
-}
-
 const postQuizSubmit = (payload) => {
     return axiosInstance.post("/api/quiz/submit", payload, {
         headers: getAuthHeader(),
@@ -68,6 +62,5 @@ export {
     createQuizQuestion,
     updateQuizQuestion,
     deleteQuizQuestion,
-    getQuizQuestionAndAnswerApi,
     getAttemptDetail
 };

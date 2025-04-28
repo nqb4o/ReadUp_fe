@@ -137,34 +137,34 @@ const PublicHomePage = () => {
   // Define the feature items
   const features = [
     {
-      title: "Giải pháp chuyên gia",
-      bgColor: "#98F1D1",
+      title: "Bài báo đặc biệt",
+      bgColor: "#e2edf6",
       image:
-        "https://images.prismic.io/quizlet-web/ZpWg2x5LeNNTxK_n_5Expertsolutions%402x.png?auto=format,compress",
+        "https://png.pngtree.com/png-clipart/20230913/original/pngtree-article-clipart-newspaper-man-reading-the-newspaper-cartoon-design-illustration-vector-png-image_11060448.png",
     },
     {
-      title: "Học hỏi",
-      bgColor: "#98E3FF",
+      title: "Câu hỏi đặc sắc",
+      bgColor: "#f6eee2",
       image:
-        "https://images.prismic.io/quizlet-web/ZpFubx5LeNNTxHxg_4Learn%402x.png?auto=format,compress",
+        "https://png.pngtree.com/png-clipart/20240622/original/pngtree-illustration-graphic-cartoon-character-of-newspaper-png-image_15395583.png",
     },
     {
-      title: "Hướng dẫn học tập",
-      bgColor: "#EEAAFF",
+      title: "Từ vựng đa dạng",
+      bgColor: "#fceadf",
       image:
-        "https://images.prismic.io/quizlet-web/ZpFuOB5LeNNTxHxU_1SG%402x.png?auto=format,compress",
+        "https://png.pngtree.com/png-vector/20220705/ourmid/pngtree-english-vocabulary-word-elated-happy-background-elated-vector-png-image_37064128.png",
     },
     {
       title: "Thẻ ghi nhớ",
-      bgColor: "#423ED8",
+      bgColor: "#e2edf6",
       image:
-        "https://images.prismic.io/quizlet-web/ZpFuUR5LeNNTxHxc_2Flashcards%402x.png?auto=format,compress",
+        "https://png.pngtree.com/png-clipart/20230914/original/pngtree-test-taking-vector-png-image_12156023.png",
     },
     {
       title: "Bài kiểm tra thực hành",
-      bgColor: "#FFC38C",
+      bgColor: "#f6e2e2",
       image:
-        "https://images.prismic.io/quizlet-web/ZpFuYB5LeNNTxHxd_3PracticeTests%402x.png?auto=format,compress",
+        "https://png.pngtree.com/png-clipart/20230914/original/pngtree-test-taking-vector-png-image_12155851.png",
     },
   ];
 
@@ -314,6 +314,7 @@ const PublicHomePage = () => {
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
+                    overflow: "hidden",
                   }}
                 >
                   <Typography
@@ -329,8 +330,9 @@ const PublicHomePage = () => {
                     alt={feature.title}
                     sx={{
                       width: "100%",
-                      height: "100%",
+                      height: "calc(100% - 72px)",
                       objectFit: "cover",
+                      overflow: "hidden",
                     }}
                   />
                 </FeatureSection>
@@ -341,229 +343,6 @@ const PublicHomePage = () => {
             <ArrowForwardIosIcon />
           </ArrowButton>
         </CarouselContainer>
-
-        <Box
-          sx={{
-            textAlign: "center",
-            maxWidth: "md",
-            p: 4,
-            pt: 0,
-            margin: "auto",
-          }}
-        >
-          <Typography
-            variant="h2"
-            component="h1"
-            fontWeight="bold"
-            sx={{
-              color: theme.palette.text.primary,
-              mb: 2,
-              fontSize: { xs: "2rem", md: "3rem" },
-            }}
-          >
-            Được hàng triệu người tin tưởng
-          </Typography>
-          <Typography
-            variant="h4"
-            color="text.secondary"
-            fontWeight="normal"
-            sx={{ mb: 3 }}
-          >
-            Mọi người đều tin tưởng vào ReadUp và chúng tôi không bao giờ làm họ
-            thất vọng.
-          </Typography>
-        </Box>
-
-        <Grid
-          container
-          spacing={3}
-          sx={{ pb: 2, maxHeight: "50rem", overflow: "hidden" }}
-        >
-          {/* Statistic 1: 3M+ Users */}
-          <Grid item xs={12} sm={4}>
-            <FeatureSection sx={{ p: 3, textAlign: "center", height: "100%" }}>
-              <Typography variant="h3" fontWeight="bold">
-                3M +
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Người dùng là học sinh và giáo viên
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Statistic 2: 5M+ Notes */}
-          <Grid item xs={12} sm={4}>
-            <FeatureSection sx={{ p: 3, textAlign: "center", height: "100%" }}>
-              <Typography variant="h3" fontWeight="bold">
-                5M +
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Bài báo hay đã được tạo
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Statistic 3: 10M+ Sets */}
-          <Grid item xs={12} sm={4}>
-            <FeatureSection sx={{ p: 3, textAlign: "center", height: "100%" }}>
-              <Typography variant="h3" fontWeight="bold">
-                10M +
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Từ vựng đã được thêm
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 1 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                Một cứu cánh trong học tập
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Ngay cả khi Quizlet không còn là dịch vụ miễn phí nữa, tôi vẫn
-                phải nói rằng tôi sẽ chọn ReadUp. Nhìn chung, đây là một nguồn
-                tài nguyên tuyệt vời cho học sinh.
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 2 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                ReadUp là phiên bản rẻ hơn, trẻ hơn, hấp dẫn hơn và tuyệt vời
-                hơn!!!
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Tôi thích ReadUp, phiên bản miễn phí tốt hơn nhiều so với
-                Quizlet. Đây là một ứng dụng tuyệt vời và tôi thực sự khuyên
-                dùng
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 3 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                Ứng dụng tuyệt vời!
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Có rất nhiều tài nguyên tuyệt vời được tạo sẵn như ghi chú và
-                thẻ ghi nhớ và tất cả đều miễn phí sử dụng, không giống như một
-                số ứng dụng thẻ ghi nhớ khác (tôi đang nói đến Quizlet). Tôi rất
-                biết ơn những nhà phát triển ReadUp, cảm ơn các bạn!
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 4 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                Cứu tôi khỏi rắc rối
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Ứng dụng này thực sự đã cứu tôi. Tôi không phải là một học sinh
-                giỏi và đây là lý do duy nhất khiến tôi vượt qua các lớp học của
-                mình
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 5 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                Thử ứng dụng này đi, tuyệt vời lắm!
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Tôi chưa bao giờ trong đời viết bài đánh giá cho bất kỳ ứng dụng
-                nào nhưng tôi thực sự rất thích ReadUp. Tôi đã giới thiệu nó cho
-                tất cả bạn bè của tôi và họ đều đồng ý rằng nó là một cứu cánh.
-              </Typography>
-            </FeatureSection>
-          </Grid>
-
-          {/* Testimonial 6 */}
-          <Grid
-            item
-            xs={12}
-            sm={4}
-            sx={{ display: { xs: "none", sm: "none", md: "flex" } }}
-          >
-            <FeatureSection sx={{ p: 3, textAlign: "center" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <span key={i}>⭐</span>
-                ))}
-              </Box>
-              <Typography variant="h6" fontWeight="bold">
-                Cái này rất cần thiết phải có trong 'bộ dụng cụ sống sót ở
-                trường học' của bạn" 😄
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Tôi hy vọng bất kỳ ai đọc bài viết này có thể cùng tôi và nhiều
-                người dùng khác chuyển từ Quizlet hoặc các đối thủ cạnh tranh
-                khác sang ReadUp! Cảm ơn bạn rất nhiều vì mọi thứ, ReadUp! thực
-                sự là một trong những ứng dụng tuyệt vời nhất từ ​​trước đến
-                nay.
-              </Typography>
-            </FeatureSection>
-          </Grid>
-        </Grid>
 
         {/* App Promotion Section */}
         <FeatureSection
@@ -580,7 +359,7 @@ const PublicHomePage = () => {
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
               <Typography variant="h2" fontWeight="bold" sx={{ pr: 8 }}>
-                Mỗi lớp học, mỗi bài kiểm tra, một ứng dụng học tập tối ưu
+                Mỗi bài báo, mỗi bài kiểm tra, một ứng dụng học tập tối ưu
               </Typography>
               <Typography
                 variant="h5"
@@ -588,8 +367,8 @@ const PublicHomePage = () => {
                 fontWeight="normal"
                 sx={{ py: 6 }}
               >
-                Tạo thẻ ghi nhớ của riêng bạn hoặc tìm bộ do giáo viên, học sinh
-                và chuyên gia tạo ra. Học mọi lúc, mọi nơi với ứng dụng miễn phí
+                Tạo thẻ ghi nhớ của riêng bạn hoặc đọc bài báo do giáo viên và
+                chuyên gia tạo ra. Học mọi lúc, mọi nơi với ứng dụng miễn phí
                 của chúng tôi.
               </Typography>
               <Box sx={{ display: "flex", gap: 2 }}>
@@ -624,7 +403,7 @@ const PublicHomePage = () => {
             <Grid item xs={12} md={6}>
               <FeatureImage
                 component="img"
-                image="https://images.prismic.io/quizlet-web/ZpWfER5LeNNTxK_S_flashcards-image.png?auto=format,compress"
+                image="https://png.pngtree.com/png-clipart/20241007/original/pngtree-interactive-learning-in-the-classroom-png-image_16224008.png"
                 alt="App Preview"
                 sx={{ width: "100%" }}
               />
@@ -648,7 +427,7 @@ const PublicHomePage = () => {
             <Grid item xs={12} md={6}>
               <FeatureImage
                 component="img"
-                image="https://images.prismic.io/quizlet-web/ZpWfEh5LeNNTxK_T_study-guides-image.png?auto=format,compress"
+                image="https://png.pngtree.com/png-clipart/20230113/original/pngtree-hand-drawn-cartoon-cute-book-textbook-dictionary-material-png-image_8907613.png"
                 alt="Study Material"
                 sx={{ width: "100%" }}
               />
@@ -663,7 +442,7 @@ const PublicHomePage = () => {
                 fontWeight="normal"
                 sx={{ py: 6 }}
               >
-                Biến các slide, video và ghi chú của bạn thành bộ thẻ ghi nhớ,
+                Biến các bài báo, hình ảnh và từ vựng của bạn thành thẻ ghi nhớ,
                 bài kiểm tra thực hành và hướng dẫn học tập.
               </Typography>
               <Button
@@ -740,7 +519,7 @@ const PublicHomePage = () => {
             <Grid item xs={12} md={6}>
               <FeatureImage
                 component="img"
-                image="https://images.prismic.io/quizlet-web/ZpWfEx5LeNNTxK_U_learn-image.png?auto=format,compress"
+                image="https://png.pngtree.com/png-clipart/20220111/original/pngtree-students-get-full-marks-in-exams-png-image_7073712.png"
                 alt="Study Material"
                 sx={{ width: "100%" }}
               />
@@ -920,8 +699,8 @@ const PublicHomePage = () => {
             fontWeight="normal"
             sx={{ mb: 3 }}
           >
-            Chúng tôi có hơn 2 triệu tài nguyên cho nhiều bài báo và câu hỏi khác
-            nhau để bạn tham khảo bất cứ lúc nào.
+            Chúng tôi có hơn 2 triệu tài nguyên cho nhiều bài báo và câu hỏi
+            khác nhau để bạn tham khảo bất cứ lúc nào.
           </Typography>
         </Box>
 
