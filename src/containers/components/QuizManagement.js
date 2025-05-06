@@ -73,34 +73,44 @@ const QuizManagement = () => {
     useEffect(() => {
         const fetchQuizQuestions = async () => {
             try {
-                // Use the imported getAllQuizQuestions function instead of getQuizQuestionApi
                 const response = await getAllQuizQuestions();
-                setQuizQuestions(response.data);
+                setQuizQuestions(response?.data || []);  // Add fallback empty array
             } catch (error) {
                 console.error("Error fetching quiz questions:", error);
+                setQuizQuestions([]); // Set empty array on error
             }
         };
         fetchQuizQuestions();
     }, []);
 
-    const filteredQuestions = quizQuestions.filter((question) =>
-        (question.question || "").toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Update the filteredQuestions definition with null checks
+    const filteredQuestions = React.useMemo(() => {
+        if (!Array.isArray(quizQuestions)) return [];
+
+        return quizQuestions.filter((question) => {
+            if (!question) return false;
+            return (question.question || "")
+                .toLowerCase()
+                .includes((searchTerm || "").toLowerCase());
+        });
+    }, [quizQuestions, searchTerm]);
 
     const handleSort = (property) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
 
-        const sortedQuestions = [...filteredQuestions].sort((a, b) => {
+        const sortedQuestions = [...quizQuestions].sort((a, b) => {
+            // Add null checks for properties
+            const aValue = a?.[property] ?? "";
+            const bValue = b?.[property] ?? "";
+
             if (property === "vocabulary_id") {
-                return isAsc
-                    ? b[property] - a[property]
-                    : a[property] - b[property];
+                return isAsc ? bValue - aValue : aValue - bValue;
             } else {
                 return isAsc
-                    ? b[property].localeCompare(a[property])
-                    : a[property].localeCompare(b[property]);
+                    ? bValue.toString().localeCompare(aValue.toString())
+                    : aValue.toString().localeCompare(bValue.toString());
             }
         });
 
@@ -177,22 +187,30 @@ const QuizManagement = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Update the handleSubmit function
     const handleSubmit = async () => {
         try {
             if (modalMode === "add") {
-                // Use the imported createQuizQuestion function
                 const response = await createQuizQuestion(formData);
-                setQuizQuestions([...quizQuestions, response.data]);
-            } else if (modalMode === "edit") {
-                // Use the imported updateQuizQuestion function
+                if (response?.data) {
+                    setQuizQuestions(prevQuestions => [...prevQuestions, response.data]);
+                }
+            } else if (modalMode === "edit" && formData.id) {
                 const response = await updateQuizQuestion(formData.id, formData);
-                setQuizQuestions(
-                    quizQuestions.map((question) =>
-                        question.id === formData.id ? response.data : question
-                    )
-                );
+                if (response?.data) {
+                    setQuizQuestions(prevQuestions =>
+                        prevQuestions.map(q =>
+                            q.id === formData.id ? { ...q, ...response.data } : q
+                        )
+                    );
+                }
             }
             handleCloseModal();
+            // Refresh the questions list after update
+            const refreshResponse = await getAllQuizQuestions();
+            if (refreshResponse?.data) {
+                setQuizQuestions(refreshResponse.data);
+            }
         } catch (error) {
             console.error("Error submitting quiz question:", error);
         }
@@ -200,8 +218,14 @@ const QuizManagement = () => {
 
     const handleDelete = async () => {
         try {
+            if (!selectedQuestion?.id) return;
+
             await deleteQuizQuestion(selectedQuestion.id);
-            setQuizQuestions(quizQuestions.filter((question) => question.id !== selectedQuestion.id));
+            // Refresh the questions list after deletion
+            const response = await getAllQuizQuestions();
+            if (response?.data) {
+                setQuizQuestions(response.data);
+            }
             handleMenuClose();
         } catch (error) {
             console.error("Error deleting quiz question:", error);
@@ -210,9 +234,12 @@ const QuizManagement = () => {
 
     const handleDeleteSelected = async () => {
         try {
-            // Use the imported deleteQuizQuestion function for each selected question
             await Promise.all(selected.map((id) => deleteQuizQuestion(id)));
-            setQuizQuestions(quizQuestions.filter((question) => !selected.includes(question.id)));
+            // Refresh the questions list after bulk deletion
+            const response = await getAllQuizQuestions();
+            if (response?.data) {
+                setQuizQuestions(response.data);
+            }
             setSelected([]);
         } catch (error) {
             console.error("Error deleting selected quiz questions:", error);
@@ -387,19 +414,19 @@ const QuizManagement = () => {
                                         </TableCell>
                                         {/* XÓA CELL vocabulary_id */}
                                         <TableCell>
-                                            {question.question.length > 50
+                                            {(question.question || "").length > 50
                                                 ? `${question.question.substring(0, 50)}...`
-                                                : question.question}
+                                                : question.question || ""}
                                         </TableCell>
                                         <TableCell>
-                                            {question.correct_answer && question.correct_answer.length > 30
+                                            {(question.correct_answer || "").length > 30
                                                 ? `${question.correct_answer.substring(0, 30)}...`
-                                                : question.correct_answer}
+                                                : question.correct_answer || ""}
                                         </TableCell>
                                         <TableCell>
-                                            {`1. ${question.wrong1?.substring(0, 15) ?? ""}${question.wrong1?.length > 15 ? '...' : ''}`} <br />
-                                            {`2. ${question.wrong2?.substring(0, 15) ?? ""}${question.wrong2?.length > 15 ? '...' : ''}`} <br />
-                                            {`3. ${question.wrong3?.substring(0, 15) ?? ""}${question.wrong3?.length > 15 ? '...' : ''}`}
+                                            {`1. ${(question.wrong1 || "").substring(0, 15)}${(question.wrong1 || "").length > 15 ? '...' : ''}`} <br />
+                                            {`2. ${(question.wrong2 || "").substring(0, 15)}${(question.wrong2 || "").length > 15 ? '...' : ''}`} <br />
+                                            {`3. ${(question.wrong3 || "").substring(0, 15)}${(question.wrong3 || "").length > 15 ? '...' : ''}`}
                                         </TableCell>
                                         <TableCell>{formatDate(question.created_at)}</TableCell>
                                         <TableCell align="center">

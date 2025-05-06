@@ -15,4 +15,5 @@ export const path = {
     QUESTION: "/questions",
     QUIZ: "/quiz",
     QUIZ_ATTEMPT: "/quiz-attempt",
+    LIBRARY: "/library",
 };

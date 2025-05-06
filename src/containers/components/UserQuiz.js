@@ -412,7 +412,7 @@ const UserQuiz = () => {
                     <Grid item xs={12} sm={4}>
                         <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#2c3e50' }}>
                             <QuestionAnswer sx={{ mr: 1, verticalAlign: 'middle' }} />
-                            Bài Quiz
+                            Bài Quiz 3000 từ thông dụng
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={4} sx={{ textAlign: 'center' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     Box,
     Typography,
@@ -6,29 +6,36 @@ import {
     IconButton,
     Paper,
     Avatar,
+    CircularProgress,
+    Fade,
+    Tooltip
 } from "@mui/material";
-import CommentIcon from "@mui/icons-material/Comment";
-import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
 import axios from "axios";
 
 const ChatBox = ({ chatbotReady = true }) => {
-    const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([
         {
             sender: "bot",
-            text: "Hello there! 👋 Nice to meet you!",
+            text: "Xin chào! 👋 Tôi có thể giúp gì cho bạn?",
         },
         {
             sender: "bot",
-            text: "How can I help you today?",
+            text: "Bạn có thể đặt câu hỏi về bài viết này.",
         },
     ]);
     const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef(null);
 
-    const handleToggleChat = () => {
-        setIsOpen(!isOpen);
+    // Auto scroll to bottom on new messages
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     const handleSendMessage = async () => {
@@ -50,7 +57,7 @@ const ChatBox = ({ chatbotReady = true }) => {
                 console.error("Error querying chatbot:", error);
                 setMessages((prev) => [
                     ...prev,
-                    { sender: "bot", text: "Sorry, I couldn't process your request." },
+                    { sender: "bot", text: "Xin lỗi, tôi không thể xử lý yêu cầu của bạn." },
                 ]);
             } finally {
                 setLoading(false);
@@ -59,154 +66,203 @@ const ChatBox = ({ chatbotReady = true }) => {
     };
 
     return (
-        <Box
-            sx={{
-                position: "fixed",
-                bottom: 20,
-                left: 20,
-                zIndex: 1500,
-            }}
-        >
-            <IconButton
-                onClick={handleToggleChat}
+        <Box sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column"
+        }}>
+            {/* Chat Messages Area */}
+            <Box
                 sx={{
-                    backgroundColor: "#000",
-                    color: "white",
-                    "&:hover": {
-                        backgroundColor: "#fff",
-                        color: "#000",
-                    },
+                    flex: 1,
+                    p: 2,
+                    overflowY: "auto",
+                    bgcolor: "#f8fafc",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1.5
                 }}
             >
-                {isOpen ? <CloseIcon /> : <CommentIcon />}
-            </IconButton>
+                {messages.map((msg, index) => (
+                    <Fade key={index} in={true} timeout={300}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+                                alignItems: "flex-start",
+                                gap: 1,
+                            }}
+                        >
+                            {msg.sender === "bot" && (
+                                <Avatar
+                                    sx={{
+                                        width: 32,
+                                        height: 32,
+                                        bgcolor: "#6366f1",
+                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                                    }}
+                                >
+                                    <SmartToyIcon sx={{ fontSize: 18 }} />
+                                </Avatar>
+                            )}
 
-            {isOpen && (
-                <Paper
-                    elevation={3}
-                    sx={{
-                        position: "absolute",
-                        bottom: 60,
-                        left: 0,
-                        width: 300,
-                        height: 400,
-                        display: "flex",
-                        flexDirection: "column",
-                        borderRadius: 2,
-                        overflow: "hidden",
-                    }}
-                >
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    px: 2,
+                                    bgcolor: msg.sender === "user" ? "#6366f1" : "white",
+                                    color: msg.sender === "user" ? "white" : "#334155",
+                                    borderRadius: 2.5,
+                                    maxWidth: "75%",
+                                    boxShadow: msg.sender === "user"
+                                        ? "0 3px 10px rgba(99, 102, 241, 0.2)"
+                                        : "0 2px 8px rgba(0, 0, 0, 0.05)",
+                                    border: msg.sender === "user" ? "none" : "1px solid #e2e8f0"
+                                }}
+                            >
+                                <Typography variant="body2" sx={{
+                                    lineHeight: 1.5,
+                                    fontWeight: 400,
+                                    fontSize: "0.95rem",
+                                    whiteSpace: "pre-wrap"
+                                }}>
+                                    {msg.text}
+                                </Typography>
+                            </Paper>
+
+                            {msg.sender === "user" && (
+                                <Avatar
+                                    sx={{
+                                        width: 32,
+                                        height: 32,
+                                        bgcolor: "#cbd5e1",
+                                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                                    }}
+                                >
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.85rem" }}>
+                                        {/* First letter of "User" */}
+                                        U
+                                    </Typography>
+                                </Avatar>
+                            )}
+                        </Box>
+                    </Fade>
+                ))}
+
+                {loading && (
                     <Box
                         sx={{
-                            bgcolor: "#000",
-                            p: 2,
                             display: "flex",
-                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            alignItems: "flex-start",
                             gap: 1,
                         }}
                     >
                         <Avatar
-                            src="https://www.pngall.com/wp-content/uploads/13/React-Logo-PNG-Image-HD.png"
-                            sx={{ width: 30, height: 30 }}
-                        />
-                        <Typography variant="h6" color="white">
-                            AI ChatBot
-                        </Typography>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            flex: 1,
-                            p: 2,
-                            overflowY: "auto",
-                            bgcolor: "#f5f5f5",
-                        }}
-                    >
-                        {messages.map((msg, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    display: "flex",
-                                    justifyContent:
-                                        msg.sender === "user" ? "flex-end" : "flex-start",
-                                    mb: 1,
-                                }}
-                            >
-                                <Paper
-                                    sx={{
-                                        p: 1,
-                                        bgcolor: msg.sender === "user" ? "primary.main" : "white",
-                                        color: msg.sender === "user" ? "white" : "text.primary",
-                                        borderRadius: 2,
-                                        maxWidth: "70%",
-                                    }}
-                                >
-                                    <Typography variant="body2">{msg.text}</Typography>
-                                </Paper>
-                            </Box>
-                        ))}
-                        {loading && (
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-start",
-                                    mb: 1,
-                                }}
-                            >
-                                <Paper
-                                    sx={{
-                                        p: 1,
-                                        bgcolor: "white",
-                                        color: "text.primary",
-                                        borderRadius: 2,
-                                        maxWidth: "70%",
-                                    }}
-                                >
-                                    <Typography variant="body2">Typing...</Typography>
-                                </Paper>
-                            </Box>
-                        )}
-                    </Box>
-
-                    <Box sx={{ p: 2, bgcolor: "white" }}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            placeholder={
-                                chatbotReady ? "Write a message..." : "Chatbot is initializing..."
-                            }
-                            value={message}
-                            disabled={!chatbotReady}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onKeyPress={(e) => {
-                                if (e.key === "Enter") handleSendMessage();
-                            }}
-                            InputProps={{
-                                endAdornment: (
-                                    <IconButton
-                                        onClick={handleSendMessage}
-                                        size="small"
-                                        sx={{
-                                            border: "unset",
-                                            backgroundColor: "transparent",
-                                            "&:hover": {
-                                                backgroundColor: "transparent",
-                                            },
-                                        }}
-                                    >
-                                        <SendIcon />
-                                    </IconButton>
-                                ),
-                            }}
                             sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: 2,
-                                },
+                                width: 32,
+                                height: 32,
+                                bgcolor: "#6366f1",
+                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                             }}
-                        />
+                        >
+                            <SmartToyIcon sx={{ fontSize: 18 }} />
+                        </Avatar>
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                px: 2,
+                                bgcolor: "white",
+                                color: "#334155",
+                                borderRadius: 2.5,
+                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+                                border: "1px solid #e2e8f0",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1
+                            }}
+                        >
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <CircularProgress size={14} thickness={5} sx={{ color: "#6366f1" }} />
+                                <Typography variant="body2">Đang trả lời...</Typography>
+                            </Box>
+                        </Paper>
                     </Box>
-                </Paper>
-            )}
+                )}
+                <div ref={messagesEndRef} />
+            </Box>
+
+            {/* Input Area */}
+            <Box sx={{
+                p: 2,
+                bgcolor: "white",
+                borderTop: "1px solid #e2e8f0"
+            }}>
+                <TextField
+                    fullWidth
+                    size="small"
+                    placeholder={
+                        chatbotReady ? "Nhập câu hỏi của bạn..." : "Đang khởi tạo trợ lý..."
+                    }
+                    value={message}
+                    disabled={!chatbotReady || loading}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                        if (e.key === "Enter") handleSendMessage();
+                    }}
+                    InputProps={{
+                        endAdornment: (
+                            <Tooltip title="Gửi">
+                                <IconButton
+                                    onClick={handleSendMessage}
+                                    disabled={!chatbotReady || loading || !message.trim()}
+                                    size="small"
+                                    sx={{
+                                        color: "#6366f1",
+                                        "&:hover": {
+                                            backgroundColor: "rgba(99, 102, 241, 0.08)",
+                                        },
+                                        "&.Mui-disabled": {
+                                            color: "#cbd5e1"
+                                        }
+                                    }}
+                                >
+                                    <SendIcon />
+                                </IconButton>
+                            </Tooltip>
+                        ),
+                    }}
+                    sx={{
+                        "& .MuiOutlinedInput-root": {
+                            borderRadius: 3,
+                            border: "1px solid #e2e8f0",
+                            "&:hover": {
+                                borderColor: "#cbd5e1"
+                            },
+                            "&.Mui-focused": {
+                                borderColor: "#6366f1",
+                                boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)"
+                            }
+                        }
+                    }}
+                />
+
+                <Typography
+                    variant="caption"
+                    sx={{
+                        display: "block",
+                        textAlign: "center",
+                        mt: 1,
+                        color: "#64748b",
+                        fontSize: "0.7rem"
+                    }}
+                >
+                    Powered by AI • Bạn có thể hỏi về nội dung bài viết
+                </Typography>
+            </Box>
         </Box>
     );
 };

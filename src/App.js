@@ -6,13 +6,11 @@ import { CartProvider } from './contexts/CartContext';
 
 function App() {
   return (
-    <React.StrictMode>
-      <AuthProvider>
-        <CartProvider>
-          <RouterProvider router={router} />
-        </CartProvider>
-      </AuthProvider>
-    </React.StrictMode>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
