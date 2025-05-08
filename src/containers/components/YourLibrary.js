@@ -19,7 +19,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { useNavigate } from "react-router-dom";
 import { handleGetVocabularyByUserId } from "../../services/VocabularyServices";
-import { getAttemptDetail } from "../../services/QuizService";
+import { getAttemptHistory } from "../../services/QuizService";
 
 const YourLibrary = () => {
     const [tabValue, setTabValue] = useState(0);
@@ -107,11 +107,12 @@ const YourLibrary = () => {
 
             setIsLoading((prev) => ({ ...prev, questions: true }));
             try {
-                const response = await getAttemptDetail(user_id);
+                const response = await getAttemptHistory(user_id);
+                console.log("Fetched questions:", response.data.history);
                 // Kiểm tra và format dữ liệu trước khi set state
-                const formattedAttempts = Array.isArray(response.data.attempt)
-                    ? response.data.attempt
-                    : [response.data.attempt]; // Nếu là single object, wrap trong array
+                const formattedAttempts = Array.isArray(response.data.history)
+                    ? response.data.history
+                    : [response.data.history]; // Nếu là single object, wrap trong array
 
                 setQuestions(formattedAttempts);
                 setError((prev) => ({ ...prev, questions: null }));
@@ -768,6 +769,7 @@ const YourLibrary = () => {
                                         }}
                                     >
                                         <ListItemText
+                                            onClick={() => navigate(`/quiz-attempt/${attempt.attempt_id}`)}
                                             primary={
                                                 <Box
                                                     sx={{
@@ -798,14 +800,10 @@ const YourLibrary = () => {
                                                 </Box>
                                             }
                                             secondary={
-                                                <Box sx={{ mt: 0.5 }}>
+                                                <Box sx={{ mt: 0.5, cursor: 'pointer' }} >
                                                     <Typography variant="body2" sx={{ color: "#666" }}>
-                                                        Ngày bắt đầu:{" "}
+                                                        Ngày làm bài:{" "}
                                                         {new Date(attempt.started_at).toLocaleString()}
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: "#666" }}>
-                                                        Ngày kết thúc:{" "}
-                                                        {new Date(attempt.ended_at).toLocaleString()}
                                                     </Typography>
                                                     <Typography
                                                         variant="body2"

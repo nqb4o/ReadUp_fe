@@ -27,6 +27,12 @@ const getAttemptDetail = (attempt_id) => {
     });
 }
 
+const getAttemptHistory = (user_id) => {
+    return axiosInstance.get(`/api/quiz/history/${user_id}`, {
+        headers: getAuthHeader(),
+    });
+}
+
 // Lấy tất cả câu hỏi quiz (admin)
 const getAllQuizQuestions = () => {
     return axiosInstance.get("/api/quiz", {
@@ -62,5 +68,6 @@ export {
     createQuizQuestion,
     updateQuizQuestion,
     deleteQuizQuestion,
-    getAttemptDetail
+    getAttemptDetail,
+    getAttemptHistory
 };
